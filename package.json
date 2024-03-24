@@ -5,11 +5,15 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node -r dotenv/config src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
+    "dotenv": "^16.4.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "axios": "^1.6.8"
   }
 }
