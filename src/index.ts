@@ -108,7 +108,7 @@ async function listGithubCommitWebhooks(
 listGithubCommitWebhooks(
   "Arunjoseph3007",
   "ts-ds",
-  process.env.GITHUB_PAT as string
+  process.env.GITHUB_API
 );
 
 // deleteGithubCommitWebhook(
