@@ -6,7 +6,8 @@
   "scripts": {
     "start": "tsc && node src/index.js",
     "build": "tsc",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "vercel-build": "echo noop"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

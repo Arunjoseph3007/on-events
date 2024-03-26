@@ -1,6 +1,6 @@
 {
   "ignore": [".git", "node_modules", "dist"],
   "watch": ["./src"],
-  "exec": "ts-node src/index.ts",
+  "exec": "ts-node -r dotenv/config src/index.ts",
   "ext": "ts"
 }
