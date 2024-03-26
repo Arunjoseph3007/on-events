@@ -171,7 +171,7 @@ async function register(owner: string, repo: string, token: string) {
       active: true,
       events: ["push"],
       config: {
-        url: "https://example.com/webhook",
+        url: "https://on-events.vercel.com/flows/12345678",
         content_type: "json",
         insecure_ssl: "0",
       },
@@ -232,6 +232,7 @@ async function list(owner: string, repo: string, token: string) {
 }
 
 async function handle(payload: IWebHooksPayload, workflowId: string) {
+  console.log("This is handler");
   console.log({ payload, workflowId });
 }
 
