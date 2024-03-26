@@ -24,6 +24,8 @@ app.post("/flows/:flowId", (req, res) => {
   const flowId = req.params.flowId;
 
   GithubCommitWebhookController.handle(paylod, flowId);
+
+  res.status(200).json({ succes: "full" });
 });
 
 // 404 - Not found route
