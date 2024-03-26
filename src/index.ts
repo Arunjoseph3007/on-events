@@ -4,7 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 
 dotenv.config();
-const PORT = process.env.PORT || 8080;
+const PORT = 3000;
 const app = express();
 
 // Middlewares
