@@ -2,6 +2,7 @@ export {};
 
 type TEnv = {
   GITHUB_API: string;
+  PORT: string;
 };
 
 declare global {

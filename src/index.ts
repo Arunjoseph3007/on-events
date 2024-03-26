@@ -1,10 +1,10 @@
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 
-dotenv.config()
-const PORT = 8787;
+dotenv.config();
+const PORT = process.env.PORT || 8080;
 const app = express();
 
 // Middlewares
