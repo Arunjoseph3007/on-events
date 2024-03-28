@@ -7,7 +7,9 @@
     "start": "tsc && node src/index.js",
     "build": "tsc",
     "dev": "nodemon",
-    "vercel-build": "echo noop"
+    "vercel-build": "echo noop",
+    "make-migrations": "drizzle-kit generate:pg",
+    "migrate": "ts-node src/db/migrate.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -15,6 +17,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.30",
     "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.20.14",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
@@ -22,7 +25,9 @@
   "dependencies": {
     "axios": "^1.6.8",
     "cors": "^2.8.5",
+    "drizzle-orm": "^0.30.5",
     "express": "^4.19.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "postgres": "^3.4.4"
   }
 }
