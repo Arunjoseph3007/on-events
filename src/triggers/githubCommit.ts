@@ -163,7 +163,12 @@ const WebHooksPayload = {
 };
 export type IWebHooksPayload = typeof WebHooksPayload;
 
-async function register(owner: string, repo: string, token: string) {
+async function register(
+  owner: string,
+  repo: string,
+  token: string,
+  workflowId: number
+) {
   const res = await axios.post(
     `https://api.github.com/repos/${owner}/${repo}/hooks`,
     {
@@ -171,7 +176,7 @@ async function register(owner: string, repo: string, token: string) {
       active: true,
       events: ["push"],
       config: {
-        url: "https://on-events.vercel.app/flows/12345678",
+        url: `https://on-events.vercel.app/workflows/${workflowId}/trigger`,
         content_type: "json",
         insecure_ssl: "0",
       },
@@ -231,11 +236,6 @@ async function list(owner: string, repo: string, token: string) {
   return res.data as TGithubWebhook[];
 }
 
-async function handle(payload: IWebHooksPayload, workflowId: string) {
-  console.log("This is handler");
-  console.log({ payload, workflowId });
-}
-
 // registerGithubCommitWebhook(
 //   "Arunjoseph3007",
 //   "ts-ds",
@@ -250,9 +250,8 @@ async function handle(payload: IWebHooksPayload, workflowId: string) {
 //   process.env.GITHUB_PAT as string
 // );
 
-export const GithubCommitWebhookController = {
+export const GithubCommitTriggerController = {
   list,
   delete: deleteWebhook,
   register,
-  handle,
 };

@@ -3,6 +3,8 @@ import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
 import { nodes, workflows } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { GithubCommitTriggerController } from "../triggers/githubCommit";
+import WorkflowExecution from "./execution";
 
 async function getWorkflowsOfUser(userId: number) {
   const myWorkflows = await db
@@ -49,15 +51,36 @@ async function createWorkflow(
     allNodes.push(nodesRes);
   }
 
+  switch (payload.triggerType) {
+    case "github:commit-received": {
+      await GithubCommitTriggerController.register(
+        "Arunjoseph3007",
+        "ts-ds",
+        process.env.GITHUB_PAT,
+        workflowRes.id
+      ); // TODO: Implement properly
+      break;
+    }
+    case "gmail:mail-received": {
+      // TODO
+      break;
+    }
+    default: {
+      throw new Error("Unknown trigger type");
+    }
+  }
+
   return { workflow: workflowRes, nodes: allNodes };
 }
 
 async function updateWorkflow(workflowId: number) {
-  return 1 as TODO;
+  // TODO
 }
 
-async function triggerWorkflow(workflowId: number) {
-  return 1 as TODO;
+async function triggerWorkflow(workflowId: number, payload: any) {
+  const flowExec = new WorkflowExecution(workflowId, payload);
+
+  await flowExec.execute();
 }
 
 export const WorkflowsController = {

@@ -1,7 +1,7 @@
 export {};
 
 type TEnv = {
-  GITHUB_API: string;
+  GITHUB_PAT: string;
   DATABASE_URL: string;
 };
 

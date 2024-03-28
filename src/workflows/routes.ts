@@ -37,7 +37,8 @@ router.put("/:workflowId", async (req, res) => {
 
 router.all("/:workflowId/trigger", async (req, res) => {
   const result = await WorkflowsController.triggerWorkflow(
-    +req.params.workflowId
+    +req.params.workflowId,
+    req.body
   );
 
   res.status(200).json(result);

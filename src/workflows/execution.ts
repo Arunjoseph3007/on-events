@@ -4,9 +4,11 @@ import { nodes, workflows } from "../db/schema";
 
 export default class WorkflowExecution {
   private readonly workflowId: number;
+  private readonly payload: any;
 
-  constructor(workflowId: number) {
+  constructor(workflowId: number, payload: any) {
     this.workflowId = workflowId;
+    this.payload = payload;
   }
 
   async execute() {

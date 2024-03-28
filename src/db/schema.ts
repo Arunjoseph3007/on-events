@@ -39,6 +39,9 @@ export const workflows = pgTable("workflows", {
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   triggerType: triggerTypeEnum("trigger_type").notNull(),
+  // webHookId: varchar("webhook_id", { length: 256 }),
+  // usePolling: boolean("use_polling").default(false).notNull(),
+  // pollingUrl: varchar("polling_url", { length: 265 }),
 });
 
 export const workflowRelations = relations(workflows, ({ one, many }) => ({
