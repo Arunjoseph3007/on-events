@@ -25,11 +25,12 @@ export const users = pgTable("users", {
 
 export const workflows = pgTable("workflows", {
   id: serial("id").primaryKey(),
+  name: varchar("name", { length: 256 }).notNull(),
   isActive: boolean("is_active").default(true),
   userId: integer("user_id")
     .references(() => users.id)
     .notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const nodes = pgTable("nodes", {

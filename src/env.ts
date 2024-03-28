@@ -6,6 +6,8 @@ type TEnv = {
 };
 
 declare global {
+  type TODO = any;
+
   namespace NodeJS {
     interface ProcessEnv extends TEnv {}
   }
