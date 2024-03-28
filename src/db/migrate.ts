@@ -14,6 +14,7 @@ migrateDB()
   .then(() => {
     console.log("Migration succesfull");
   })
-  .catch(() => {
+  .catch((e) => {
     console.log("Migration unsuccesfull");
+    console.log(e);
   });

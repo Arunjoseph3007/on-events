@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { eventTypeEnum, nodeTypeEnum } from "../db/schema";
+import { eventTypeEnum, triggerTypeEnum } from "../db/schema";
 
 export const insertWorkflowSchema = z.object({
   name: z.string().max(256),
+  triggerType: z.enum(triggerTypeEnum.enumValues),
   nodes: z
     .array(
       z.object({
-        nodeType: z.enum(nodeTypeEnum.enumValues),
         eventType: z.enum(eventTypeEnum.enumValues),
       })
     )

@@ -16,17 +16,10 @@ async function getWorkflowsOfUser(userId: number) {
 async function getWorkflowsById(workflowId: number) {
   const thisWorkflow = await db.query.workflows.findFirst({
     where: eq(workflows.id, workflowId),
+    with: { nodes: true },
   });
 
-  if (!thisWorkflow) {
-    throw new Error("Workflow not found");
-  }
-
-  const thisWorkflowNodes = await db.query.nodes.findMany({
-    where: eq(nodes.workflowId, thisWorkflow.id),
-  });
-
-  return { ...thisWorkflow, nodes: thisWorkflowNodes };
+  return thisWorkflow;
 }
 
 async function createWorkflow(
@@ -35,21 +28,28 @@ async function createWorkflow(
 ) {
   const [workflowRes] = await db
     .insert(workflows)
-    .values({ name: payload.name, userId })
+    .values({ name: payload.name, userId, triggerType: payload.triggerType })
     .returning();
 
-  const nodesRes = await db
-    .insert(nodes)
-    .values(
-      payload.nodes.map((node) => ({
+  const allNodes: {
+    id: number;
+    workflowId: number;
+    eventType: "gmail:send-mail" | "discord:send-message";
+    parentNodeId: number | null;
+  }[] = [];
+  for (const node of payload.nodes) {
+    const [nodesRes] = await db
+      .insert(nodes)
+      .values({
         eventType: node.eventType,
-        nodeType: node.nodeType,
         workflowId: workflowRes.id,
-      }))
-    )
-    .returning();
+        parentNodeId: allNodes.at(-1)?.id || null,
+      })
+      .returning();
+    allNodes.push(nodesRes);
+  }
 
-  return { ...workflowRes, nodes: nodesRes };
+  return { workflow: workflowRes, nodes: allNodes };
 }
 
 async function updateWorkflow(workflowId: number) {

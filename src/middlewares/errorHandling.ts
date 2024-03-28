@@ -6,5 +6,10 @@ export default function errorHandlingMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  res.status(500).json({ message: err.message || "Something went wrong" });
+  try {
+    const json = JSON.parse(err.message);
+    res.status(500).json({ message: json || "Something went wrong" });
+  } catch (error) {
+    res.status(500).json({ message: err.message || "Something went wrong" });
+  }
 }
