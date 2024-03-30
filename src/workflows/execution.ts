@@ -45,7 +45,23 @@ export default class WorkflowExecution {
   private async executeNode(
     node: InferSelectModel<typeof nodes>
   ): Promise<boolean> {
-    let a: TODO = 0;
-    return true;
+    try {
+      switch (node.eventType) {
+        case "discord:send-message": {
+          // TODO
+          break;
+        }
+        case "gmail:send-mail": {
+          // TODO
+          break;
+        }
+        default: {
+          throw new Error("Unknown action type");
+        }
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }
