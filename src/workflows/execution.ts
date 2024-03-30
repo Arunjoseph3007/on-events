@@ -1,6 +1,7 @@
 import { InferSelectModel, eq } from "drizzle-orm";
 import db from "../db";
 import { nodes, workflows } from "../db/schema";
+import { DiscordActions } from "../actions/discord";
 
 export default class WorkflowExecution {
   private readonly workflowId: number;
@@ -48,7 +49,10 @@ export default class WorkflowExecution {
     try {
       switch (node.eventType) {
         case "discord:send-message": {
-          // TODO
+          const res = await DiscordActions.sendMessage(
+            "1223491599556939870",
+            "Hello there @hello"
+          );
           break;
         }
         case "gmail:send-mail": {

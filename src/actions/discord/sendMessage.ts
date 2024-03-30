@@ -1,9 +1,6 @@
 import axios from "axios";
 
-export default async function sendDiscordMessage(
-  channelId: string,
-  content: string
-) {
+export default async function sendMessage(channelId: string, content: string) {
   try {
     const res = await axios.post(
       `https://discord.com/api/v6//channels/${channelId}/messages`,
