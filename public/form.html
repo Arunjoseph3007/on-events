@@ -17,11 +17,12 @@
 
         // Parameters to pass to OAuth 2.0 endpoint.
         var params = {
-          client_id: "1014548543088-6gqr06fcf649jma2afhrao2obfkgqgq2.apps.googleusercontent.com",
+          client_id:
+            "1014548543088-6gqr06fcf649jma2afhrao2obfkgqgq2.apps.googleusercontent.com",
           redirect_uri: "https://on-events.vercel.app",
           response_type: "token",
-        //   scope: ".../auth/userinfo.email .../auth/userinfo.profile .../auth/drive.file ./auth/spreadsheets",
-          scope: "https://www.googleapis.com/auth/drive.metadata.readonly",
+          scope:
+            "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets",
           include_granted_scopes: "true",
           state: "pass-through value 1234",
         };
