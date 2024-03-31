@@ -8,6 +8,7 @@ const envKeys = [
   "GSHEET_OAUTH_CLIENT_ID",
   "GSHEET_OAUTH_CLIENT_SECRET",
   "GSHEET_REFRESH_TOKEN",
+  "GMAIL_REFRESH_TOKEN",
 ] as const;
 
 type TEnv = Record<(typeof envKeys)[number], string>;
