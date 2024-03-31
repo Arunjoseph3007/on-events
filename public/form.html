@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+  </head>
+  <body>
+    <button onclick="oauthSignIn()">click</button>
+    <script>
+      function oauthSignIn() {
+        var oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
+
+        var form = document.createElement("form");
+        form.setAttribute("method", "GET"); // Send as a GET request.
+        form.setAttribute("action", oauth2Endpoint);
+
+        // Parameters to pass to OAuth 2.0 endpoint.
+        var params = {
+          client_id: "1014548543088-6gqr06fcf649jma2afhrao2obfkgqgq2.apps.googleusercontent.com",
+          redirect_uri: "https://on-events.vercel.app",
+          response_type: "token",
+        //   scope: ".../auth/userinfo.email .../auth/userinfo.profile .../auth/drive.file ./auth/spreadsheets",
+          scope: "https://www.googleapis.com/auth/drive.metadata.readonly",
+          include_granted_scopes: "true",
+          state: "pass-through value 1234",
+        };
+
+        // Add form parameters as hidden input values.
+        for (var p in params) {
+          var input = document.createElement("input");
+          input.setAttribute("type", "hidden");
+          input.setAttribute("name", p);
+          input.setAttribute("value", params[p]);
+          form.appendChild(input);
+        }
+
+        // Add form to page and submit it to open the OAuth 2.0 endpoint.
+        document.body.appendChild(form);
+        form.submit();
+      }
+    </script>
+  </body>
+</html>
