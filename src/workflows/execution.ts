@@ -2,6 +2,7 @@ import { InferSelectModel, eq } from "drizzle-orm";
 import db from "../db";
 import { nodes, workflows } from "../db/schema";
 import { DiscordActions } from "../actions/discord";
+import { GSheetActions } from "../actions/gsheets";
 
 export default class WorkflowExecution {
   private readonly workflowId: number;
@@ -52,6 +53,13 @@ export default class WorkflowExecution {
           const res = await DiscordActions.sendMessage(
             "1223491599556939870",
             "Hello there @hello"
+          );
+          break;
+        }
+        case "gsheet:append-row": {
+          const res = await GSheetActions.addRow(
+            "1UO3NlLd8_VD11sA5ZJWsXwFZztpppOLENtYLHGMysWY",
+            ["this", "is", "really", "happening", new Date().toDateString()]
           );
           break;
         }

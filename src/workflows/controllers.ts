@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
-import { nodes, workflows } from "../db/schema";
+import { eventTypeEnum, nodes, workflows } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { GithubCommitTriggerController } from "../triggers/githubCommit";
 import WorkflowExecution from "./execution";
@@ -36,7 +36,7 @@ async function createWorkflow(
   const allNodes: {
     id: number;
     workflowId: number;
-    eventType: "gmail:send-mail" | "discord:send-message";
+    eventType: (typeof eventTypeEnum.enumValues)[number];
     parentNodeId: number | null;
   }[] = [];
   for (const node of payload.nodes) {

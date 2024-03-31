@@ -17,6 +17,7 @@ export const triggerTypeEnum = pgEnum("triggerTypeEnum", [
 
 export const eventTypeEnum = pgEnum("eventTypeEnum", [
   "gmail:send-mail",
+  "gsheet:append-row",
   "discord:send-message",
 ]);
 
