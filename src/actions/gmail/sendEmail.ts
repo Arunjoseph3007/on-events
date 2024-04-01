@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { TSendEmailConfig } from ".";
 
 // This will be very IMPORTANT in future
 // Used to get refresh token from code obtained from consent screen
@@ -20,7 +21,14 @@ const a = async () => {
   console.log(data);
 };
 
-export default async function sendEmail(to: string, content: string) {
+const toRawEmailContent = (config: TSendEmailConfig) =>
+  btoa(`From: ${config.from}
+To: ${config.to}
+Subject: ${config.subject}
+
+${config.content}`);
+
+export default async function sendEmail(config: TSendEmailConfig) {
   try {
     const { data: accessData } = await axios.post(
       "https://oauth2.googleapis.com/token",
@@ -35,20 +43,11 @@ export default async function sendEmail(to: string, content: string) {
     console.log(accessData);
 
     const { data } = await axios.post(
-      `https://gmail.googleapis.com/gmail/v1/users/${to}/messages/send`,
-      { raw: btoa(content) },
+      `https://gmail.googleapis.com/gmail/v1/users/${config.to}/messages/send`,
+      { raw: toRawEmailContent(config) },
       { headers: { Authorization: "Bearer " + accessData.access_token } }
     );
   } catch (error) {
     console.log((error as any).response.data);
   }
 }
-
-// sendEmail(
-//   "arunjoseph3007@gmail.com",
-//   `From: arunjoseph3007@gmail.com
-// To: arunjoseph3007@gmail.com
-// Subject: This is from my app
-
-// Hey this message was sent from on events app using automation`
-// );

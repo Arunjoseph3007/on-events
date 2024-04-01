@@ -3,6 +3,8 @@ import db from "../db";
 import { nodes, workflows } from "../db/schema";
 import { DiscordActions } from "../actions/discord";
 import { GSheetActions } from "../actions/gsheets";
+import { GmailActions } from "../actions/gmail";
+import { TWebHooksPayload } from "../triggers/githubCommit";
 
 export default class WorkflowExecution {
   private readonly workflowId: number;
@@ -64,7 +66,13 @@ export default class WorkflowExecution {
           break;
         }
         case "gmail:send-mail": {
-          // TODO
+          const gPayload = this.payload as TWebHooksPayload;
+          const res = await GmailActions.sendEmail({
+            content: `Hello you received a new commit from ${gPayload.commits[0].author.name} with message${gPayload.commits[0].message}`,
+            from: "arunjoseph3007@gmail.com",
+            to: "arunjoseph3007@gmail.com",
+            subject: `New Commit on ${gPayload.repository.full_name}`,
+          });
           break;
         }
         default: {

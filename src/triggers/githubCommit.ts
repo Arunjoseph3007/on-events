@@ -161,7 +161,7 @@ const WebHooksPayload = {
     modified: ["README.md"],
   },
 };
-export type IWebHooksPayload = typeof WebHooksPayload;
+export type TWebHooksPayload = typeof WebHooksPayload;
 
 async function register(
   owner: string,
