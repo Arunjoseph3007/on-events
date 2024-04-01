@@ -21,6 +21,11 @@ export const eventTypeEnum = pgEnum("eventTypeEnum", [
   "discord:send-message",
 ]);
 
+export const credentialTypeEnum = pgEnum("credentialTypeEnum", [
+  ...triggerTypeEnum.enumValues,
+  ...eventTypeEnum.enumValues,
+]);
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   fullName: text("full_name").notNull(),
@@ -29,6 +34,7 @@ export const users = pgTable("users", {
 
 export const userRelation = relations(users, ({ many }) => ({
   workflows: many(workflows),
+  credentials: many(credentials),
 }));
 
 export const workflows = pgTable("workflows", {
@@ -40,12 +46,19 @@ export const workflows = pgTable("workflows", {
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   triggerType: triggerTypeEnum("trigger_type").notNull(),
+  triggerCredentialId: integer("trigger_credential_id").references(
+    () => credentials.id
+  ),
   // webHookId: varchar("webhook_id", { length: 256 }),
   // usePolling: boolean("use_polling").default(false).notNull(),
   // pollingUrl: varchar("polling_url", { length: 265 }),
 });
 
 export const workflowRelations = relations(workflows, ({ one, many }) => ({
+  triggerCredential: one(credentials, {
+    fields: [workflows.triggerCredentialId],
+    references: [credentials.id],
+  }),
   creator: one(users, {
     fields: [workflows.userId],
     references: [users.id],
@@ -60,6 +73,7 @@ export const nodes = pgTable("nodes", {
     .notNull(),
   eventType: eventTypeEnum("event_type").notNull(),
   parentNodeId: integer("parent_node_id"),
+  credentialId: integer("credential_id").references(() => credentials.id),
 });
 
 export const nodeParentRelation = relations(nodes, ({ one }) => ({
@@ -70,5 +84,29 @@ export const nodeParentRelation = relations(nodes, ({ one }) => ({
   workflow: one(workflows, {
     fields: [nodes.workflowId],
     references: [workflows.id],
+  }),
+  credential: one(credentials, {
+    fields: [nodes.credentialId],
+    references: [credentials.id],
+  }),
+}));
+
+export const credentials = pgTable("credentials", {
+  id: serial("id").primaryKey(),
+  clientId: varchar("client_id", { length: 256 }),
+  accessToken: text("access_token").notNull(),
+  expiry: timestamp("expiry"),
+  credentialType: credentialTypeEnum("credential_type").notNull(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
+});
+
+export const credentialsRelations = relations(credentials, ({ many, one }) => ({
+  workflows: many(workflows),
+  nodes: many(nodes),
+  owner: one(users, {
+    fields: [credentials.userId],
+    references: [users.id],
   }),
 }));

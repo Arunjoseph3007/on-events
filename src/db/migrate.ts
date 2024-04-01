@@ -17,4 +17,5 @@ migrateDB()
   .catch((e) => {
     console.log("Migration unsuccesfull");
     console.log(e);
-  });
+  })
+  .finally(() => process.exit());

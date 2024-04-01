@@ -1,4 +1,4 @@
-import * as z from "zod";
+import type * as z from "zod";
 import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
 import { eventTypeEnum, nodes, workflows } from "../db/schema";
@@ -28,6 +28,7 @@ async function createWorkflow(
   payload: z.infer<typeof insertWorkflowSchema>,
   userId: number
 ) {
+  // TODO: rewrite using transactions
   const [workflowRes] = await db
     .insert(workflows)
     .values({ name: payload.name, userId, triggerType: payload.triggerType })

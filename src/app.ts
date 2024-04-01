@@ -5,6 +5,7 @@ import morgan from "morgan";
 import notFoundMiddleWare from "./middlewares/notFound";
 import errorHandlingMiddleware from "./middlewares/errorHandling";
 import { WorflowsRouter } from "./workflows/routes";
+import { CredentialsRouter } from "./credentials/routes";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get("/", (_, res) => res.json({ hello: "world" }));
 
 // Resource routers
 app.use(WorflowsRouter.path, WorflowsRouter.router);
+app.use(CredentialsRouter.path, CredentialsRouter.router);
 
 // 404 - Not found route
 app.use(notFoundMiddleWare);

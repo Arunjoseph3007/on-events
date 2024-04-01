@@ -8,8 +8,8 @@
     "build": "tsc",
     "dev": "nodemon",
     "vercel-build": "echo noop",
-    "make-migrations": "drizzle-kit generate:pg",
-    "migrate": "ts-node src/db/migrate.ts"
+    "db:generate": "drizzle-kit generate:pg",
+    "db:migrate": "ts-node src/db/migrate.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
