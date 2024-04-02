@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { InferSelectModel, relations } from "drizzle-orm";
 import {
   pgTable,
   serial,
@@ -110,3 +110,9 @@ export const credentialsRelations = relations(credentials, ({ many, one }) => ({
     references: [users.id],
   }),
 }));
+
+// Types
+export type TWorkflow = InferSelectModel<typeof workflows>;
+export type TUser = InferSelectModel<typeof users>;
+export type TNode = InferSelectModel<typeof nodes>;
+export type TCredential = InferSelectModel<typeof credentials>;

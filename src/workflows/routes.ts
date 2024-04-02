@@ -7,14 +7,14 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   const workflows = await WorkflowsController.getWorkflowsOfUser(2 as TODO);
-  res.status(200).json(workflows);
+  res.json(workflows);
 });
 
 router.get("/:workflowId", async (req, res) => {
   const workflow = await WorkflowsController.getWorkflowsById(
     +req.params.workflowId
   );
-  res.status(200).json(workflow);
+  res.json(workflow);
 });
 
 router.post("/", async (req, res, next) => {
@@ -22,7 +22,7 @@ router.post("/", async (req, res, next) => {
     const body = insertWorkflowSchema.parse(req.body);
 
     const workflow = await WorkflowsController.createWorkflow(body, 2 as TODO);
-    res.status(200).json(workflow);
+    res.json(workflow);
   } catch (error) {
     next(error);
   }
@@ -32,7 +32,7 @@ router.put("/:workflowId", async (req, res) => {
   const updated = await WorkflowsController.updateWorkflow(
     +req.params.workflowId
   );
-  res.status(200).json(updated);
+  res.json(updated);
 });
 
 router.all("/:workflowId/trigger", async (req, res) => {
@@ -41,7 +41,7 @@ router.all("/:workflowId/trigger", async (req, res) => {
     req.body
   );
 
-  res.status(200).json(result);
+  res.json(result);
 });
 
 export const WorflowsRouter: TRouter = {

@@ -1,7 +1,13 @@
 import type * as z from "zod";
 import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
-import { eventTypeEnum, nodes, workflows } from "../db/schema";
+import {
+  TNode,
+  TWorkflow,
+  eventTypeEnum,
+  nodes,
+  workflows,
+} from "../db/schema";
 import { eq } from "drizzle-orm";
 import { GithubCommitTriggerController } from "../triggers/githubCommit";
 import WorkflowExecution from "./execution";
@@ -28,29 +34,35 @@ async function createWorkflow(
   payload: z.infer<typeof insertWorkflowSchema>,
   userId: number
 ) {
-  // TODO: rewrite using transactions
-  const [workflowRes] = await db
-    .insert(workflows)
-    .values({ name: payload.name, userId, triggerType: payload.triggerType })
-    .returning();
+  let workflowRes: TWorkflow | null = {} as TODO;
+  const allNodes: TNode[] = [];
 
-  const allNodes: {
-    id: number;
-    workflowId: number;
-    eventType: (typeof eventTypeEnum.enumValues)[number];
-    parentNodeId: number | null;
-  }[] = [];
-  for (const node of payload.nodes) {
-    const [nodesRes] = await db
-      .insert(nodes)
+  await db.transaction(async (tx) => {
+    [workflowRes] = await tx
+      .insert(workflows)
       .values({
-        eventType: node.eventType,
-        workflowId: workflowRes.id,
-        parentNodeId: allNodes.at(-1)?.id || null,
+        name: payload.name,
+        userId,
+        triggerType: payload.triggerType,
+        triggerCredentialId: payload.triggerCredentialId,
       })
       .returning();
-    allNodes.push(nodesRes);
-  }
+
+    for (const node of payload.nodes) {
+      const [nodesRes] = await tx
+        .insert(nodes)
+        .values({
+          eventType: node.eventType,
+          workflowId: workflowRes.id,
+          parentNodeId: allNodes.at(-1)?.id || null,
+          credentialId: node.credentialId,
+        })
+        .returning();
+      allNodes.push(nodesRes);
+    }
+  });
+
+  if (!workflowRes) return;
 
   switch (payload.triggerType) {
     case "github:commit-received": {
