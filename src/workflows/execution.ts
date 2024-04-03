@@ -1,10 +1,17 @@
-import { InferSelectModel, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import db from "../db";
-import { nodes, workflows } from "../db/schema";
+import { TCredential, TEventType, TNode, workflows } from "../db/schema";
 import { DiscordActions } from "../actions/discord";
 import { GSheetActions } from "../actions/gsheets";
 import { GmailActions } from "../actions/gmail";
 import { TWebHooksPayload } from "../triggers/githubCommit";
+import { TAction } from "../types/Action";
+
+const EventTypeToAction: Record<TEventType, TAction> = {
+  "discord:send-message": DiscordActions.sendMessage,
+  "gmail:send-mail": GmailActions.sendEmail,
+  "gsheet:append-row": GSheetActions.addRow,
+};
 
 export default class WorkflowExecution {
   private readonly workflowId: number;
@@ -19,7 +26,11 @@ export default class WorkflowExecution {
     const thisWorkflow = await db.query.workflows.findFirst({
       where: eq(workflows.id, this.workflowId),
       with: {
-        nodes: true,
+        nodes: {
+          with: {
+            credential: true,
+          },
+        },
       },
     });
 
@@ -47,32 +58,40 @@ export default class WorkflowExecution {
   }
 
   private async executeNode(
-    node: InferSelectModel<typeof nodes>
+    node: TNode & { credential: TCredential | null }
   ): Promise<boolean> {
     try {
       switch (node.eventType) {
         case "discord:send-message": {
           const res = await DiscordActions.sendMessage(
-            "1223491599556939870",
-            "Hello there @hello"
+            node,
+            // "1223491599556939870",
+            // "Hello there @hello"
+            node.config as TODO
           );
           break;
         }
         case "gsheet:append-row": {
           const res = await GSheetActions.addRow(
-            "1UO3NlLd8_VD11sA5ZJWsXwFZztpppOLENtYLHGMysWY",
-            ["this", "is", "really", "happening", new Date().toDateString()]
+            node,
+            // "1UO3NlLd8_VD11sA5ZJWsXwFZztpppOLENtYLHGMysWY",
+            // ["this", "is", "really", "happening", new Date().toDateString()]
+            node.config as TODO
           );
           break;
         }
         case "gmail:send-mail": {
           const gPayload = this.payload as TWebHooksPayload;
-          const res = await GmailActions.sendEmail({
-            content: `Hello you received a new commit from ${gPayload.commits[0].author.name} with message${gPayload.commits[0].message}`,
-            from: "arunjoseph3007@gmail.com",
-            to: "arunjoseph3007@gmail.com",
-            subject: `New Commit on ${gPayload.repository.full_name}`,
-          });
+          const res = await GmailActions.sendEmail(
+            node,
+            //   {
+            //   content: `Hello you received a new commit from ${gPayload.commits[0].author.name} with message${gPayload.commits[0].message}`,
+            //   from: "arunjoseph3007@gmail.com",
+            //   to: "arunjoseph3007@gmail.com",
+            //   subject: `New Commit on ${gPayload.repository.full_name}`,
+            // }
+            node.config as TODO
+          );
           break;
         }
         default: {

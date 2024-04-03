@@ -6,42 +6,46 @@
     <title>Form</title>
   </head>
   <body>
-    <button onclick="oauthSignIn()">click</button>
+    <!-- <button onclick="oauthSignIn()">click</button> -->
+    <form action="https://accounts.google.com/o/oauth2/v2/auth" method="GET">
+      <button>Submit</button>
+    </form>
+    <style>
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 500px;
+        margin: 20px auto;
+        gap: 5px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+    </style>
     <script>
-      function oauthSignIn() {
-        var oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
+      const oauth2Endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
+      const form = document.querySelector("form");
 
-        var form = document.createElement("form");
-        form.setAttribute("method", "GET"); // Send as a GET request.
-        form.setAttribute("action", oauth2Endpoint);
+      // Parameters to pass to OAuth 2.0 endpoint.
+      const params = {
+        client_id:
+          "1014548543088-6gqr06fcf649jma2afhrao2obfkgqgq2.apps.googleusercontent.com",
+        redirect_uri: "https://on-events.vercel.app",
+        response_type: "code",
+        scope:
+          // "https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send", // Gmail
+          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets", // GSheet
+        include_granted_scopes: "true",
+        state: "pass-through value 1234",
+        access_type: "offline",
+        prompt: "consent",
+      };
 
-        // Parameters to pass to OAuth 2.0 endpoint.
-        var params = {
-          client_id:
-            "1014548543088-6gqr06fcf649jma2afhrao2obfkgqgq2.apps.googleusercontent.com",
-          redirect_uri: "https://on-events.vercel.app",
-          response_type: "code",
-          scope:
-            "https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send", // Gmail
-          // "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets", // GSheet
-          include_granted_scopes: "true",
-          state: "pass-through value 1234",
-          access_type: "offline",
-          prompt: "consent",
-        };
-
-        // Add form parameters as hidden input values.
-        for (var p in params) {
-          var input = document.createElement("input");
-          input.setAttribute("type", "hidden");
-          input.setAttribute("name", p);
-          input.setAttribute("value", params[p]);
-          form.appendChild(input);
-        }
-
-        // Add form to page and submit it to open the OAuth 2.0 endpoint.
-        document.body.appendChild(form);
-        form.submit();
+      // Add form parameters as hidden input values.
+      for (const p in params) {
+        const input = document.createElement("input");
+        input.setAttribute("type", "text");
+        input.setAttribute("name", p);
+        input.setAttribute("value", params[p]);
+        form.appendChild(input);
       }
     </script>
   </body>

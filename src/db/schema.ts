@@ -7,6 +7,7 @@ import {
   timestamp,
   boolean,
   integer,
+  json,
   pgEnum,
 } from "drizzle-orm/pg-core";
 
@@ -49,7 +50,8 @@ export const workflows = pgTable("workflows", {
   triggerCredentialId: integer("trigger_credential_id").references(
     () => credentials.id
   ),
-  // webHookId: varchar("webhook_id", { length: 256 }),
+  resourceId: text("resource_id").notNull(),
+  webHookId: varchar("webhook_id", { length: 256 }),
   // usePolling: boolean("use_polling").default(false).notNull(),
   // pollingUrl: varchar("polling_url", { length: 265 }),
 });
@@ -74,6 +76,8 @@ export const nodes = pgTable("nodes", {
   eventType: eventTypeEnum("event_type").notNull(),
   parentNodeId: integer("parent_node_id"),
   credentialId: integer("credential_id").references(() => credentials.id),
+  resourceId: text("resource_id").notNull(),
+  config: json("config"),
 });
 
 export const nodeParentRelation = relations(nodes, ({ one }) => ({
@@ -116,3 +120,6 @@ export type TWorkflow = InferSelectModel<typeof workflows>;
 export type TUser = InferSelectModel<typeof users>;
 export type TNode = InferSelectModel<typeof nodes>;
 export type TCredential = InferSelectModel<typeof credentials>;
+export type TEventType = (typeof eventTypeEnum.enumValues)[number];
+export type TTriggerType = (typeof triggerTypeEnum.enumValues)[number];
+export type TCredentialType = (typeof credentialTypeEnum.enumValues)[number];

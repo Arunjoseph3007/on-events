@@ -1,4 +1,7 @@
 import axios from "axios";
+import { credentials, workflows, type TWorkflow } from "../db/schema";
+import db from "../db";
+import { eq } from "drizzle-orm";
 
 export type TGithubWebhook = {
   type: string;
@@ -163,12 +166,20 @@ const WebHooksPayload = {
 };
 export type TWebHooksPayload = typeof WebHooksPayload;
 
-async function register(
-  owner: string,
-  repo: string,
-  token: string,
-  workflowId: number
-) {
+async function register(workflow: TWorkflow) {
+  if (!workflow.triggerCredentialId) {
+    throw new Error("Invalid credentials");
+  }
+
+  const [owner, repo] = workflow.resourceId.split("/");
+  const cred = await db.query.credentials.findFirst({
+    where: eq(credentials.id, workflow.triggerCredentialId),
+  });
+
+  if (!cred) {
+    throw new Error("Invaid credentials");
+  }
+
   const res = await axios.post(
     `https://api.github.com/repos/${owner}/${repo}/hooks`,
     {
@@ -176,7 +187,7 @@ async function register(
       active: true,
       events: ["push"],
       config: {
-        url: `https://on-events.vercel.app/workflows/${workflowId}/trigger`,
+        url: `https://on-events.vercel.app/workflows/${workflow.id}/trigger`,
         content_type: "json",
         insecure_ssl: "0",
       },
@@ -184,35 +195,48 @@ async function register(
     {
       headers: {
         Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${cred.accessToken}`,
         "X-GitHub-Api-Version": "2022-11-28",
       },
     }
   );
 
-  console.log(res.data);
-  return (res.data.id as number).toString();
+  const webHookId = (res.data.id as number).toString();
+
+  await db
+    .update(workflows)
+    .set({ webHookId: webHookId })
+    .where(eq(workflows.id, workflow.id));
+
+  return webHookId;
 }
 
-async function deleteWebhook(
-  owner: string,
-  repo: string,
-  hookId: string,
-  token: string
-) {
+async function deleteWebhook(workflow: TWorkflow) {
   try {
+    if (!workflow.triggerCredentialId) {
+      throw new Error("Invalid credentials");
+    }
+
+    const [owner, repo] = workflow.resourceId.split("/");
+    const cred = await db.query.credentials.findFirst({
+      where: eq(credentials.id, workflow.triggerCredentialId),
+    });
+
+    if (!cred) {
+      throw new Error("Invaid credentials");
+    }
+
     const res = await axios.delete(
-      `https://api.github.com/repos/${owner}/${repo}/hooks/${hookId}`,
+      `https://api.github.com/repos/${owner}/${repo}/hooks/${workflow.webHookId}`,
       {
         headers: {
           Accept: "application/vnd.github+json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${cred.accessToken}`,
           "X-GitHub-Api-Version": "2022-11-28",
         },
       }
     );
 
-    console.log(res.status);
     return true;
   } catch (e) {
     return false;

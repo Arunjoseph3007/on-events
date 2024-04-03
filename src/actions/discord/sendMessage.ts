@@ -1,9 +1,10 @@
 import axios from "axios";
+import { TAction } from "../../types/Action";
 
-export default async function sendMessage(channelId: string, content: string) {
+const sendMessage: TAction<string> = async (node, content) => {
   try {
     const res = await axios.post(
-      `https://discord.com/api/v6//channels/${channelId}/messages`,
+      `https://discord.com/api/v6//channels/${node.resourceId}/messages`,
       { content },
       {
         headers: {
@@ -17,4 +18,6 @@ export default async function sendMessage(channelId: string, content: string) {
     console.log(error);
     return null;
   }
-}
+};
+
+export default sendMessage;

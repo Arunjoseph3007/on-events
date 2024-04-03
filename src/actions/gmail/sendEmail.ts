@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { TSendEmailConfig } from ".";
+import { TAction } from "../../types/Action";
 
 const toRawEmailContent = (config: TSendEmailConfig) =>
   btoa(`From: ${config.from}
@@ -8,19 +9,17 @@ Subject: ${config.subject}
 
 ${config.content}`);
 
-export default async function sendEmail(config: TSendEmailConfig) {
+const sendEmail: TAction<TSendEmailConfig> = async (node, config) => {
   try {
     const { data: accessData } = await axios.post(
       "https://oauth2.googleapis.com/token",
       {
-        refresh_token: process.env.GMAIL_REFRESH_TOKEN,
+        refresh_token: node.credential?.accessToken,
         client_id: process.env.GSHEET_OAUTH_CLIENT_ID,
         client_secret: process.env.GSHEET_OAUTH_CLIENT_SECRET,
         grant_type: "refresh_token",
       }
     );
-
-    console.log(accessData);
 
     const { data } = await axios.post(
       `https://gmail.googleapis.com/gmail/v1/users/${config.to}/messages/send`,
@@ -30,4 +29,6 @@ export default async function sendEmail(config: TSendEmailConfig) {
   } catch (error) {
     console.log((error as any).response.data);
   }
-}
+};
+
+export default sendEmail;
