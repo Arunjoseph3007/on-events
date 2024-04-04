@@ -9,7 +9,7 @@ export type TGsheetRange = {
 export default async function readRange(sheetId: string, range: string) {
   const { data } = await axios.get(
     `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}`,
-    { params: { key: process.env.GSHEETS_API_KEY } }
+    { params: { key: "" as TODO } }
   );
 
   return data as TGsheetRange;

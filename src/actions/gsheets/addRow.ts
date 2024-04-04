@@ -7,8 +7,8 @@ const addRow: TAction<string[]> = async (node, values) => {
       "https://oauth2.googleapis.com/token",
       {
         refresh_token: node.credential?.accessToken,
-        client_id: process.env.GSHEET_OAUTH_CLIENT_ID,
-        client_secret: process.env.GSHEET_OAUTH_CLIENT_SECRET,
+        client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
+        client_secret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
         grant_type: "refresh_token",
       }
     );

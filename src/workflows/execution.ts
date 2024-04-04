@@ -66,8 +66,11 @@ export default class WorkflowExecution {
     try {
       const eventAction = EventTypeToAction[node.eventType];
       const formattedConfig = this.formatConfig(node.config);
-      const res = await eventAction(node, formattedConfig);
-      this.executionData[node.internalId.toString()] = res;
+
+      if (process.env.ACTION == "true") {
+        const res = await eventAction(node, formattedConfig);
+        this.executionData[node.internalId.toString()] = res;
+      }
 
       return true;
     } catch (error) {
@@ -80,7 +83,7 @@ export default class WorkflowExecution {
     const str = JSON.stringify(payload);
     const replaced = str.replace(ReplacerRegex, (token) =>
       token
-        .slice(2, -1)
+        .slice(2, -2)
         .split("__")
         .reduce((acc, cur) => acc[cur], this.executionData)
     );

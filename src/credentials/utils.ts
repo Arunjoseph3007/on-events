@@ -8,8 +8,8 @@ export const grantRefreshToken = async (accessCode: string) => {
     {
       params: {
         code: accessCode,
-        client_id: process.env.GSHEET_OAUTH_CLIENT_ID,
-        client_secret: process.env.GSHEET_OAUTH_CLIENT_SECRET,
+        client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
+        client_secret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
         redirect_uri: "https://on-events.vercel.app",
         grant_type: "authorization_code",
       },

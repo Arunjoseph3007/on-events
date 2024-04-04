@@ -4,11 +4,9 @@ const envKeys = [
   "GITHUB_PAT",
   "DATABASE_URL",
   "DISCORD_BOT_TOKEN",
-  "GSHEETS_API_KEY",
-  "GSHEET_OAUTH_CLIENT_ID",
-  "GSHEET_OAUTH_CLIENT_SECRET",
-  "GSHEET_REFRESH_TOKEN",
-  "GMAIL_REFRESH_TOKEN",
+  "GOOGLE_OAUTH_CLIENT_ID",
+  "GOOGLE_OAUTH_CLIENT_SECRET",
+  "ACTION",
 ] as const;
 
 type TEnv = Record<(typeof envKeys)[number], string>;
