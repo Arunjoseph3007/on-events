@@ -53,7 +53,7 @@ export default class WorkflowExecution {
       }
 
       currentlyExecutingNode = thisWorkflow.nodes.find(
-        (n) => n.parentNodeId == currentlyExecutingNode!.id
+        (n) => n.parentNodeId == currentlyExecutingNode!.internalId
       );
     }
 
