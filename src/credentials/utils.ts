@@ -16,5 +16,5 @@ export const grantRefreshToken = async (accessCode: string) => {
     }
   );
 
-  return data.access_token as string;
+  return data.refresh_token as string;
 };
