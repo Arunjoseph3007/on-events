@@ -3,21 +3,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Form</title>
+    <title>Google OAuth generator</title>
   </head>
   <body>
-    <!-- <button onclick="oauthSignIn()">click</button> -->
-    <form action="https://accounts.google.com/o/oauth2/v2/auth" method="GET">
-      <button>Submit</button>
-    </form>
+    <div>
+      <div class="row">
+        <h5>GSHEET</h5>
+        <p>
+          https://www.googleapis.com/auth/userinfo.email
+          https://www.googleapis.com/auth/userinfo.profile
+          https://www.googleapis.com/auth/drive.file
+          https://www.googleapis.com/auth/spreadsheets
+        </p>
+      </div>
+      <div class="row">
+        <h5>GMAIL</h5>
+        <p>
+          https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify
+          https://www.googleapis.com/auth/gmail.compose
+          https://www.googleapis.com/auth/gmail.send
+        </p>
+      </div>
+    </div>
+    <form
+      action="https://accounts.google.com/o/oauth2/v2/auth"
+      method="GET"
+    ></form>
     <style>
+      * {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
       form {
-        display: flex;
+        display: grid;
+        grid-template-columns: 200px 1fr;
         flex-direction: column;
-        width: 500px;
+        max-width: 600px;
+        width: 90%;
         margin: 20px auto;
         gap: 5px;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      label {
+        text-transform: uppercase;
+      }
+      input{
+        padding-block: 4px;
+      }
+      .row {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+      button {
+        appearance: none;
+        outline: none;
+        border: none;
+        background: #000;
+        color: #fff;
+        padding-block: 10px;
+        font-size: 1.3rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        border-radius: 5px;
+        cursor: pointer;
       }
     </style>
     <script>
@@ -41,12 +88,20 @@
 
       // Add form parameters as hidden input values.
       for (const p in params) {
+        const label = document.createElement("label");
+        label.innerText = p.replace('_',' ');
+        form.appendChild(label);
+
         const input = document.createElement("input");
         input.setAttribute("type", "text");
         input.setAttribute("name", p);
         input.setAttribute("value", params[p]);
         form.appendChild(input);
       }
+
+      const btn = document.createElement("button");
+      btn.innerText = "Submit";
+      form.appendChild(btn);
     </script>
   </body>
 </html>
