@@ -4,8 +4,9 @@ import { TCredential, TEventType, TNode, workflows } from "../db/schema";
 import { DiscordActions } from "../actions/discord";
 import { GSheetActions } from "../actions/gsheets";
 import { GmailActions } from "../actions/gmail";
-import { TWebHooksPayload } from "../triggers/githubCommit";
 import { TAction } from "../types/Action";
+
+const ReplacerRegex = /\{\{[0-9a-zA-Z_-]+\}\}/g;
 
 const EventTypeToAction: Record<TEventType, TAction> = {
   "discord:send-message": DiscordActions.sendMessage,
@@ -15,11 +16,13 @@ const EventTypeToAction: Record<TEventType, TAction> = {
 
 export default class WorkflowExecution {
   private readonly workflowId: number;
-  private readonly payload: any;
+  private readonly executionData: any;
 
   constructor(workflowId: number, payload: any) {
     this.workflowId = workflowId;
-    this.payload = payload;
+    this.executionData = {
+      trigger: payload,
+    };
   }
 
   async execute() {
@@ -61,47 +64,27 @@ export default class WorkflowExecution {
     node: TNode & { credential: TCredential | null }
   ): Promise<boolean> {
     try {
-      switch (node.eventType) {
-        case "discord:send-message": {
-          const res = await DiscordActions.sendMessage(
-            node,
-            // "1223491599556939870",
-            // "Hello there @hello"
-            node.config as TODO
-          );
-          break;
-        }
-        case "gsheet:append-row": {
-          const res = await GSheetActions.addRow(
-            node,
-            // "1UO3NlLd8_VD11sA5ZJWsXwFZztpppOLENtYLHGMysWY",
-            // ["this", "is", "really", "happening", new Date().toDateString()]
-            node.config as TODO
-          );
-          break;
-        }
-        case "gmail:send-mail": {
-          const gPayload = this.payload as TWebHooksPayload;
-          const res = await GmailActions.sendEmail(
-            node,
-            //   {
-            //   content: `Hello you received a new commit from ${gPayload.commits[0].author.name} with message${gPayload.commits[0].message}`,
-            //   from: "arunjoseph3007@gmail.com",
-            //   to: "arunjoseph3007@gmail.com",
-            //   subject: `New Commit on ${gPayload.repository.full_name}`,
-            // }
-            node.config as TODO
-          );
-          break;
-        }
-        default: {
-          throw new Error("Unknown action type");
-          break;
-        }
-      }
+      const eventAction = EventTypeToAction[node.eventType];
+      const formattedConfig = this.formatConfig(node.config);
+      const res = await eventAction(node, formattedConfig);
+      this.executionData[node.internalId.toString()] = res;
+
       return true;
     } catch (error) {
       return false;
     }
+  }
+
+  // TODO: replace this janky workaround with actually working solution
+  private formatConfig(payload: any) {
+    const str = JSON.stringify(payload);
+    const replaced = str.replace(ReplacerRegex, (token) =>
+      token
+        .slice(2, -1)
+        .split("__")
+        .reduce((acc, cur) => acc[cur], this.executionData)
+    );
+    const convBack = JSON.parse(replaced);
+    return convBack;
   }
 }
