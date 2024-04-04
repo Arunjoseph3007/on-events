@@ -70,6 +70,7 @@ export const workflowRelations = relations(workflows, ({ one, many }) => ({
 
 export const nodes = pgTable("nodes", {
   id: serial("id").primaryKey(),
+  internalId: integer("internal_id").notNull(),
   workflowId: integer("workflow_id")
     .references(() => workflows.id)
     .notNull(),
@@ -83,7 +84,7 @@ export const nodes = pgTable("nodes", {
 export const nodeParentRelation = relations(nodes, ({ one }) => ({
   parent: one(nodes, {
     fields: [nodes.parentNodeId],
-    references: [nodes.id],
+    references: [nodes.internalId],
   }),
   workflow: one(workflows, {
     fields: [nodes.workflowId],

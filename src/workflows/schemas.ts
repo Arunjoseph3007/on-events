@@ -13,6 +13,8 @@ export const insertWorkflowSchema = z.object({
         credentialId: z.number().optional(),
         resourceId: z.string(),
         config: z.any(),
+        internalId: z.number(),
+        parentNodeId: z.number().optional(),
       })
     )
     .min(1)

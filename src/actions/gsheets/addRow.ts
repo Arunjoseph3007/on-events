@@ -29,6 +29,8 @@ const addRow: TAction<string[]> = async (node, values) => {
         },
       }
     );
+
+    return data;
   } catch (error) {
     console.log((error as any).response);
   }

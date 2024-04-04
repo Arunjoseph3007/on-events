@@ -1,20 +1,20 @@
 import * as z from "zod";
 import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
-import { TEventType, TNode, TWorkflow, nodes, workflows } from "../db/schema";
+import { TEventType, nodes, workflows } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { GithubCommitTriggerController } from "../triggers/githubCommit";
 import WorkflowExecution from "./execution";
 
 const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {
   "discord:send-message": z.string(),
+  "gsheet:append-row": z.array(z.string()),
   "gmail:send-mail": z.object({
     to: z.string().email(),
     from: z.string().email(),
     subject: z.string(),
     content: z.string().min(1),
   }),
-  "gsheet:append-row": z.array(z.string()),
 };
 
 async function getWorkflowsOfUser(userId: number) {
@@ -39,40 +39,25 @@ async function createWorkflow(
   payload: z.infer<typeof insertWorkflowSchema>,
   userId: number
 ) {
-  let workflowRes: TWorkflow | null = {} as TODO;
-  const allNodes: TNode[] = [];
-
   payload.nodes.forEach((node) => {
     node.config = EventTypeToConfigSchema[node.eventType].parse(node.config);
   });
 
-  await db.transaction(async (tx) => {
-    [workflowRes] = await tx
-      .insert(workflows)
-      .values({
-        name: payload.name,
-        userId,
-        triggerType: payload.triggerType,
-        triggerCredentialId: payload.triggerCredentialId,
-        resourceId: payload.resourceId,
-      })
-      .returning();
+  const [workflowRes] = await db
+    .insert(workflows)
+    .values({
+      name: payload.name,
+      userId,
+      triggerType: payload.triggerType,
+      triggerCredentialId: payload.triggerCredentialId,
+      resourceId: payload.resourceId,
+    })
+    .returning();
 
-    for (const node of payload.nodes) {
-      const [nodesRes] = await tx
-        .insert(nodes)
-        .values({
-          eventType: node.eventType,
-          workflowId: workflowRes.id,
-          parentNodeId: allNodes.at(-1)?.id || null,
-          credentialId: node.credentialId,
-          resourceId: node.resourceId,
-          config: node.config,
-        })
-        .returning();
-      allNodes.push(nodesRes);
-    }
-  });
+  const nodesRes = await db
+    .insert(nodes)
+    .values(payload.nodes.map((n) => ({ ...n, workflowId: workflowRes.id })))
+    .returning();
 
   if (!workflowRes) return;
 
@@ -90,7 +75,7 @@ async function createWorkflow(
     }
   }
 
-  return { workflow: workflowRes, nodes: allNodes };
+  return { workflow: workflowRes, nodes: nodesRes };
 }
 
 async function updateWorkflow(workflowId: number) {
