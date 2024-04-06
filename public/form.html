@@ -9,20 +9,15 @@
     <div>
       <div class="row">
         <h5>GSHEET</h5>
-        <p>
-          https://www.googleapis.com/auth/userinfo.email
-          https://www.googleapis.com/auth/userinfo.profile
-          https://www.googleapis.com/auth/drive.file
-          https://www.googleapis.com/auth/spreadsheets
-        </p>
+        <p>https://www.googleapis.com/auth/spreadsheets</p>
       </div>
       <div class="row">
         <h5>GMAIL</h5>
-        <p>
-          https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify
-          https://www.googleapis.com/auth/gmail.compose
-          https://www.googleapis.com/auth/gmail.send
-        </p>
+        <p>https://www.googleapis.com/auth/gmail.send</p>
+      </div>
+      <div class="row">
+        <h5>GCALENDER EVENT</h5>
+        <p>https://www.googleapis.com/auth/calendar.events.readonly https://www.googleapis.com/auth/calendar.readonly</p>
       </div>
     </div>
     <form
@@ -45,7 +40,7 @@
       label {
         text-transform: uppercase;
       }
-      input{
+      input {
         padding-block: 4px;
       }
       .row {
@@ -77,9 +72,7 @@
           "1014548543088-6gqr06fcf649jma2afhrao2obfkgqgq2.apps.googleusercontent.com",
         redirect_uri: "https://on-events.vercel.app",
         response_type: "code",
-        scope:
-          // "https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send", // Gmail
-          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets", // GSheet
+        scope: "",
         include_granted_scopes: "true",
         state: "pass-through value 1234",
         access_type: "offline",
@@ -89,7 +82,7 @@
       // Add form parameters as hidden input values.
       for (const p in params) {
         const label = document.createElement("label");
-        label.innerText = p.replace('_',' ');
+        label.innerText = p.replace("_", " ");
         form.appendChild(label);
 
         const input = document.createElement("input");

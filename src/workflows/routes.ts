@@ -2,6 +2,7 @@ import { Router } from "express";
 import { TRouter } from "../types/Router";
 import { WorkflowsController } from "./controllers";
 import { insertWorkflowSchema } from "./schemas";
+import validate from "../middlewares/validateBody";
 
 const router = Router();
 
@@ -17,11 +18,12 @@ router.get("/:workflowId", async (req, res) => {
   res.json(workflow);
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", validate(insertWorkflowSchema), async (req, res, next) => {
   try {
-    const body = insertWorkflowSchema.parse(req.body);
-
-    const workflow = await WorkflowsController.createWorkflow(body, 2 as TODO);
+    const workflow = await WorkflowsController.createWorkflow(
+      req.body,
+      2 as TODO
+    );
     res.json(workflow);
   } catch (error) {
     next(error);
