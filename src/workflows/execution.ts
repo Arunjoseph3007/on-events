@@ -5,6 +5,7 @@ import { DiscordActions } from "../actions/discord";
 import { GSheetActions } from "../actions/gsheets";
 import { GmailActions } from "../actions/gmail";
 import { TAction } from "../types/Action";
+import { TriggerTypeToController } from "../triggers";
 
 const ReplacerRegex = /\{\{[0-9a-zA-Z_-]+\}\}/g;
 
@@ -36,8 +37,13 @@ export default class WorkflowExecution {
         },
       },
     });
-
     if (!thisWorkflow) {
+      throw new Error("Workflow not found");
+    }
+
+    const controller = TriggerTypeToController[thisWorkflow.triggerType];
+    const isValid = await controller.handle(this.executionData.trigger);
+    if (!isValid) {
       throw new Error("Workflow not found");
     }
 

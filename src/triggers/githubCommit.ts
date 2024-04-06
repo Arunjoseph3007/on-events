@@ -258,7 +258,9 @@ async function list(owner: string, repo: string, token: string) {
   return res.data as TGithubWebhook[];
 }
 
-async function handle(req: Request) {}
+async function handle(req: Request) {
+  return true;
+}
 
 export const GithubCommitTriggerController: TTriggerController = {
   delete: deleteWebhook,

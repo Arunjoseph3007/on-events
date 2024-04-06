@@ -1,12 +1,10 @@
 import * as z from "zod";
 import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
-import { TEventType, TTriggerType, nodes, workflows } from "../db/schema";
+import { TEventType, nodes, workflows } from "../db/schema";
 import { eq } from "drizzle-orm";
-import { GithubCommitTriggerController } from "../triggers/githubCommit";
 import WorkflowExecution from "./execution";
-import { TTriggerController } from "../types/TriggerController";
-import { GCalenderEventsTriggerController } from "../triggers/gcalenderEvents";
+import { TriggerTypeToController } from "../triggers";
 
 const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {
   "discord:send-message": z.string(),
@@ -17,12 +15,6 @@ const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {
     subject: z.string(),
     content: z.string().min(1),
   }),
-};
-
-const TriggerTypeToController: Record<TTriggerType, TTriggerController> = {
-  "gcalender:event-created": GCalenderEventsTriggerController,
-  "github:commit-received": GithubCommitTriggerController,
-  "gmail:mail-received": null as TODO,
 };
 
 async function getWorkflowsOfUser(userId: number) {

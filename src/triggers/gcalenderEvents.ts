@@ -84,7 +84,9 @@ async function deleteWebhook(workflow: TWorkflow) {
   console.log(res.data);
 }
 
-async function handle(req: Request) {}
+async function handle(req: Request) {
+  return true;
+}
 
 export const GCalenderEventsTriggerController: TTriggerController = {
   delete: deleteWebhook,
