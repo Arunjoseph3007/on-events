@@ -14,6 +14,7 @@ import {
 export const triggerTypeEnum = pgEnum("triggerTypeEnum", [
   "github:commit-received",
   "gmail:mail-received",
+  "gcalender:event-created",
 ]);
 
 export const eventTypeEnum = pgEnum("eventTypeEnum", [

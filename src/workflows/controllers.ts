@@ -1,10 +1,12 @@
 import * as z from "zod";
 import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
-import { TEventType, nodes, workflows } from "../db/schema";
+import { TEventType, TTriggerType, nodes, workflows } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { GithubCommitTriggerController } from "../triggers/githubCommit";
 import WorkflowExecution from "./execution";
+import { TTriggerController } from "../types/TriggerController";
+import { GCalenderEventsTriggerController } from "../triggers/gcalenderEvents";
 
 const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {
   "discord:send-message": z.string(),
@@ -15,6 +17,12 @@ const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {
     subject: z.string(),
     content: z.string().min(1),
   }),
+};
+
+const TriggerTypeToController: Record<TTriggerType, TTriggerController> = {
+  "gcalender:event-created": GCalenderEventsTriggerController,
+  "github:commit-received": GithubCommitTriggerController,
+  "gmail:mail-received": null as TODO,
 };
 
 async function getWorkflowsOfUser(userId: number) {
@@ -61,19 +69,8 @@ async function createWorkflow(
 
   if (!workflowRes) return;
 
-  switch (payload.triggerType) {
-    case "github:commit-received": {
-      await GithubCommitTriggerController.register(workflowRes);
-      break;
-    }
-    case "gmail:mail-received": {
-      // TODO
-      break;
-    }
-    default: {
-      throw new Error("Unknown trigger type");
-    }
-  }
+  const controller = TriggerTypeToController[workflowRes.triggerType];
+  const res = await controller.register(workflowRes);
 
   return { workflow: workflowRes, nodes: nodesRes };
 }

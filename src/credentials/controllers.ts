@@ -3,17 +3,14 @@ import { insertCredentialsSchema } from "./schema";
 import db from "../db";
 import { TCredentialType, credentials } from "../db/schema";
 import { and, eq } from "drizzle-orm";
-import { grantRefreshToken } from "./utils";
+import { googleGrantRefreshToken, isGoogleCred } from "./utils";
 
 async function create(
   payload: z.infer<typeof insertCredentialsSchema>,
   userId: number
 ) {
-  if (
-    payload.credentialType.startsWith("gmail:") ||
-    payload.credentialType.startsWith("gsheet:")
-  ) {
-    payload.accessToken = await grantRefreshToken(payload.accessToken);
+  if (isGoogleCred(payload.credentialType)) {
+    payload.accessToken = await googleGrantRefreshToken(payload.accessToken);
   }
 
   const created = await db
@@ -38,10 +35,7 @@ async function getCredentialsOfType(type: TCredentialType, userId: number) {
     .select()
     .from(credentials)
     .where(
-      and(
-        eq(credentials.userId, userId), 
-        eq(credentials.credentialType, type)
-      )
+      and(eq(credentials.userId, userId), eq(credentials.credentialType, type))
     );
 
   return creds;
