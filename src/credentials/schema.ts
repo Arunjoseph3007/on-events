@@ -7,3 +7,5 @@ export const insertCredentialsSchema = z.object({
   expiry: z.date().optional(),
   credentialType: z.enum(credentialTypeEnum.enumValues),
 });
+
+export const credTypeSchema = z.enum(credentialTypeEnum.enumValues);

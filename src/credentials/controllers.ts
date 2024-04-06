@@ -1,8 +1,8 @@
 import type * as z from "zod";
 import { insertCredentialsSchema } from "./schema";
 import db from "../db";
-import { credentials } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { TCredentialType, credentials } from "../db/schema";
+import { and, eq } from "drizzle-orm";
 import { grantRefreshToken } from "./utils";
 
 async function create(
@@ -33,6 +33,20 @@ async function getCredentialsByUserId(userId: number) {
   return creds;
 }
 
+async function getCredentialsOfType(type: TCredentialType, userId: number) {
+  const creds = await db
+    .select()
+    .from(credentials)
+    .where(
+      and(
+        eq(credentials.userId, userId), 
+        eq(credentials.credentialType, type)
+      )
+    );
+
+  return creds;
+}
+
 async function getCredentialsById(id: number) {
   const cred = await db.query.credentials.findFirst({
     where: eq(credentials.id, id),
@@ -50,4 +64,5 @@ export const CredentialsController = {
   getCredentialsByUserId,
   getCredentialsById,
   delete: deleteCred,
+  getCredentialsOfType,
 };

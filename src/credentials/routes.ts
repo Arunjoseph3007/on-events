@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { TRouter } from "../types/Router";
 import { CredentialsController } from "./controllers";
-import { insertCredentialsSchema } from "./schema";
+import { credTypeSchema, insertCredentialsSchema } from "./schema";
 
 const router = Router();
 
@@ -35,6 +35,18 @@ router.get("/:id", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+router.get("/type/:type", async (req, res) => {
+  try {
+    const type = credTypeSchema.parse(req.params.type);
+
+    const creds = await CredentialsController.getCredentialsOfType(
+      type,
+      2 as TODO
+    );
+    res.json(creds);
+  } catch (error) {}
 });
 
 router.delete("/:id", async (req, res) => {});
