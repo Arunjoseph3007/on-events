@@ -85,7 +85,7 @@ async function deleteWebhook(workflow: TWorkflow) {
 }
 
 async function handle(req: Request) {
-  return true;
+  return true; // TODO
 }
 
 export const GCalenderEventsTriggerController: TTriggerController = {
@@ -93,15 +93,3 @@ export const GCalenderEventsTriggerController: TTriggerController = {
   register,
   handle,
 };
-
-register({
-  id: 0,
-  triggerCredentialId: 9,
-  resourceId: "arunjoseph3007@gmail.com",
-  createdAt: new Date(),
-  isActive: true,
-  name: "",
-  triggerType: "gcalender:event-created",
-  userId: 6,
-  webHookId: "",
-});

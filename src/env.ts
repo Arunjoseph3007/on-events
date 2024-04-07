@@ -7,6 +7,7 @@ const envKeys = [
   "GOOGLE_OAUTH_CLIENT_ID",
   "GOOGLE_OAUTH_CLIENT_SECRET",
   "ACTION",
+  "JWT_SECRET_KEY",
 ] as const;
 
 type TEnv = Record<(typeof envKeys)[number], string>;

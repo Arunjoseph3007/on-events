@@ -259,7 +259,7 @@ async function list(owner: string, repo: string, token: string) {
 }
 
 async function handle(req: Request) {
-  return true;
+  return true; // TODO
 }
 
 export const GithubCommitTriggerController: TTriggerController = {
