@@ -2,14 +2,18 @@ import { Router } from "express";
 import type { TRouter } from "../types/Router";
 import { CredentialsController } from "./controllers";
 import { credTypeSchema, insertCredentialsSchema } from "./schema";
+import { authenticateUser } from "../middlewares/authenticate";
+import UnAuthorizedError from "../error/unauthorized";
 
 const router = Router();
+
+router.use(authenticateUser);
 
 router.post("/", async (req, res, next) => {
   try {
     const payload = insertCredentialsSchema.parse(req.body);
 
-    const created = await CredentialsController.create(payload, 2 as TODO);
+    const created = await CredentialsController.create(payload, req.user.id);
 
     res.status(200).json(created);
   } catch (error) {
@@ -19,7 +23,9 @@ router.post("/", async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    const creds = await CredentialsController.getCredentialsByUserId(2 as TODO);
+    const creds = await CredentialsController.getCredentialsByUserId(
+      req.user.id
+    );
 
     res.status(200).json(creds);
   } catch (error) {
@@ -30,6 +36,10 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const cred = await CredentialsController.getCredentialsById(+req.params.id);
+
+    if (req.user.id != cred?.userId) {
+      throw new UnAuthorizedError();
+    }
 
     res.status(200).json(cred);
   } catch (error) {
@@ -43,7 +53,7 @@ router.get("/type/:type", async (req, res) => {
 
     const creds = await CredentialsController.getCredentialsOfType(
       type,
-      2 as TODO
+      req.user.id
     );
     res.json(creds);
   } catch (error) {}

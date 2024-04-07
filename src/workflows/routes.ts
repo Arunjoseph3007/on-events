@@ -3,11 +3,23 @@ import { TRouter } from "../types/Router";
 import { WorkflowsController } from "./controllers";
 import { insertWorkflowSchema } from "./schemas";
 import validate from "../middlewares/validateBody";
+import { authenticateUser } from "../middlewares/authenticate";
 
 const router = Router();
 
+router.post("/:workflowId/trigger", async (req, res) => {
+  const result = await WorkflowsController.triggerWorkflow(
+    +req.params.workflowId,
+    req.body
+  );
+
+  res.json(result);
+});
+
+router.use(authenticateUser);
+
 router.get("/", async (req, res) => {
-  const workflows = await WorkflowsController.getWorkflowsOfUser(2 as TODO);
+  const workflows = await WorkflowsController.getWorkflowsOfUser(req.user.id);
   res.json(workflows);
 });
 
@@ -22,7 +34,7 @@ router.post("/", validate(insertWorkflowSchema), async (req, res, next) => {
   try {
     const workflow = await WorkflowsController.createWorkflow(
       req.body,
-      2 as TODO
+      req.user.id
     );
     res.json(workflow);
   } catch (error) {
@@ -35,15 +47,6 @@ router.put("/:workflowId", async (req, res) => {
     +req.params.workflowId
   );
   res.json(updated);
-});
-
-router.all("/:workflowId/trigger", async (req, res) => {
-  const result = await WorkflowsController.triggerWorkflow(
-    +req.params.workflowId,
-    req.body
-  );
-
-  res.json(result);
 });
 
 export const WorflowsRouter: TRouter = {
