@@ -1,9 +1,15 @@
-import { Router } from "express";
+import { Request, Router } from "express";
 import type { TRouter } from "../types/Router";
 import { CredentialsController } from "./controllers";
 import { credTypeSchema, insertCredentialsSchema } from "./schema";
 import { authenticateUser } from "../middlewares/authenticate";
 import UnAuthorizedError from "../error/unauthorized";
+import {
+  TPaginationResponse,
+  getPaginationResponse,
+} from "../utils/pagination";
+import { TCredential, credentials } from "../db/schema";
+import { CredentialQuery } from "./queries";
 
 const router = Router();
 
@@ -23,11 +29,8 @@ router.post("/", async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    const creds = await CredentialsController.getCredentialsByUserId(
-      req.user.id
-    );
-
-    res.status(200).json(creds);
+    const query = CredentialQuery.credentialsByUserId(req.user.id);
+    await res.paginateQuery(query, credentials.id);
   } catch (error) {
     next(error);
   }
@@ -47,16 +50,15 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.get("/type/:type", async (req, res) => {
+router.get("/type/:type", async (req, res, next) => {
   try {
     const type = credTypeSchema.parse(req.params.type);
+    const query = CredentialQuery.credentialsOfType(type, req.user.id);
 
-    const creds = await CredentialsController.getCredentialsOfType(
-      type,
-      req.user.id
-    );
-    res.json(creds);
-  } catch (error) {}
+    await res.paginateQuery(query, credentials.id);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.delete("/:id", async (req, res) => {});

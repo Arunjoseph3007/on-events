@@ -4,6 +4,9 @@ import { WorkflowsController } from "./controllers";
 import { insertWorkflowSchema } from "./schemas";
 import validate from "../middlewares/validateBody";
 import { authenticateUser } from "../middlewares/authenticate";
+import { workflows } from "../db/schema";
+import { WorkflowQueries } from "./queries";
+import { desc } from "drizzle-orm";
 
 const router = Router();
 
@@ -18,9 +21,13 @@ router.post("/:workflowId/trigger", async (req, res) => {
 
 router.use(authenticateUser);
 
-router.get("/", async (req, res) => {
-  const workflows = await WorkflowsController.getWorkflowsOfUser(req.user.id);
-  res.json(workflows);
+router.get("/", async (req, res, next) => {
+  try {
+    const query = WorkflowQueries.workflowsOfUser(req.user.id);
+    await res.paginateQuery(query, desc(workflows.createdAt));
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/:workflowId", async (req, res) => {

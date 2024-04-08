@@ -21,26 +21,6 @@ async function create(
   return created[0];
 }
 
-async function getCredentialsByUserId(userId: number) {
-  const creds = await db
-    .select()
-    .from(credentials)
-    .where(eq(credentials.userId, userId));
-
-  return creds;
-}
-
-async function getCredentialsOfType(type: TCredentialType, userId: number) {
-  const creds = await db
-    .select()
-    .from(credentials)
-    .where(
-      and(eq(credentials.userId, userId), eq(credentials.credentialType, type))
-    );
-
-  return creds;
-}
-
 async function getCredentialsById(id: number) {
   const cred = await db.query.credentials.findFirst({
     where: eq(credentials.id, id),
@@ -55,8 +35,6 @@ async function deleteCred(id: number) {
 
 export const CredentialsController = {
   create,
-  getCredentialsByUserId,
   getCredentialsById,
   delete: deleteCred,
-  getCredentialsOfType,
 };

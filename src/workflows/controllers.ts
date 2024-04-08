@@ -17,15 +17,6 @@ const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {
   }),
 };
 
-async function getWorkflowsOfUser(userId: number) {
-  const myWorkflows = await db
-    .select()
-    .from(workflows)
-    .where(eq(workflows.userId, userId));
-
-  return myWorkflows;
-}
-
 async function getWorkflowsById(workflowId: number) {
   const thisWorkflow = await db.query.workflows.findFirst({
     where: eq(workflows.id, workflowId),
@@ -80,7 +71,6 @@ async function triggerWorkflow(workflowId: number, payload: any) {
 export const WorkflowsController = {
   createWorkflow,
   getWorkflowsById,
-  getWorkflowsOfUser,
   updateWorkflow,
   triggerWorkflow,
 };
