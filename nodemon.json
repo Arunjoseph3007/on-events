@@ -1,6 +1,6 @@
 {
   "ignore": [".git", "node_modules", "dist"],
   "watch": ["./src"],
-  "exec": "ts-node src/index.ts",
+  "exec": "esbuild src/index.ts --platform=node --outfile=dist/index.js --bundle && node dist/index.js",
   "ext": "ts"
 }

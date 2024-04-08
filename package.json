@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "tsc --noEmit",
     "start": "tsc && node src/index.js",
-    "build": "tsc",
+    "build": "esbuild src/index.ts --platform=node --outfile=dist/index.js --bundle",
+    "watch": "esbuild src/index.ts --platform=node --outfile=dist/index.js --bundle --watch",
     "dev": "nodemon",
     "vercel-build": "echo noop",
     "db:generate": "drizzle-kit generate:pg",
@@ -22,9 +23,9 @@
     "@types/node": "^20.11.30",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.20.14",
+    "esbuild": "^0.20.2",
     "express-rate-limit": "^7.2.0",
     "nodemon": "^3.1.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   },
   "dependencies": {
