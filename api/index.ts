@@ -4,7 +4,6 @@ import fs from "fs";
 import errorHandlingMiddleware from "../src/middlewares/errorHandling";
 import path from "path";
 
-const PORT = 3000;
 const template = fs.readFileSync(
   path.resolve(__dirname, "..", "dist/client/index.html"),
   "utf-8"
@@ -18,6 +17,7 @@ app.use(
 
 app.use("*", async (_, res) => {
   try {
+    console.error(path.resolve(__dirname, "..", "dist/client"));
     // @ts-ignore
     const { render } = await import("./server/server.mjs");
 
@@ -30,6 +30,4 @@ app.use("*", async (_, res) => {
 
 app.use(errorHandlingMiddleware);
 
-app.listen(PORT, () => {
-  console.log("App running on port:", PORT);
-});
+export default app;
