@@ -53,7 +53,7 @@ router.post("/login", validate(loginSchema), async (req, res, next) => {
       secure: true,
     });
 
-    res.json({ accessToken, user });
+    res.json({ accessToken, user, refreshToken });
   } catch (error) {
     next(error);
   }
@@ -65,7 +65,7 @@ router.post("/refresh", async (req, res, next) => {
 
     const user = await verifyToken(refreshToken);
     const { id, email, name } = user;
-    const accessToken = createAccessToken(id, email, name);
+    const accessToken = await createAccessToken(id, email, name);
 
     res.json({ accessToken, user });
   } catch (error) {

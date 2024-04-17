@@ -6,10 +6,13 @@
   "scripts": {
     "lint": "tsc --noEmit",
     "start": "tsc && node src/index.js",
+    "build:client": "vite build --outDir dist/client",
+    "build:server": "vite build --ssr src/pages/server.tsx --outDir dist/server",
     "build": "esbuild src/index.ts --platform=node --outfile=dist/index.js --bundle",
-    "watch": "esbuild src/index.ts --platform=node --outfile=dist/index.js --bundle --watch",
+    "watch": "esbuild src/index.ts --platform=node --outfile=dist/watch.js --bundle --watch",
+    "dev:frontend": "esbuild src/dev.ts --platform=node --outfile=dist/frontend.js --bundle --external:vite && node dist/frontend.js",
     "dev": "nodemon",
-    "vercel-build": "echo noop",
+    "vercel-build": "yarn build:client && yarn build:server",
     "db:generate": "drizzle-kit generate:pg",
     "db:migrate": "ts-node src/db/migrate.ts"
   },
@@ -21,12 +24,16 @@
     "@types/express": "^4.17.21",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.30",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-react": "^4.2.1",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.20.14",
     "esbuild": "^0.20.2",
     "express-rate-limit": "^7.2.0",
     "nodemon": "^3.1.0",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.3",
+    "vite": "^5.2.8"
   },
   "dependencies": {
     "axios": "^1.6.8",
@@ -39,6 +46,8 @@
     "jose": "^5.2.3",
     "morgan": "^1.10.0",
     "postgres": "^3.4.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "zod": "^3.22.4"
   }
 }

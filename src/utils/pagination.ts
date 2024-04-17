@@ -10,8 +10,7 @@ Not sure how to test just queries without controllers
 import { SQL, count } from "drizzle-orm";
 import type { PgColumn, PgSelect } from "drizzle-orm/pg-core";
 import db from "../db";
-import { Request } from "express";
-import type { Express } from "express";
+import type { Express, Request } from "express";
 
 declare module "express-serve-static-core" {
   interface Response {
@@ -76,8 +75,9 @@ export function setupPagination(app: Express) {
     pageSize = 20
   ) {
     let page = 1;
-    if (this.req.query.page && typeof this.req.query.page == "string") {
-      page = +this.req.query.page;
+    const param = this.req.query.page;
+    if (param && typeof param == "string" && !isNaN(parseFloat(param))) {
+      page = +param;
     }
     const result = await withPagination(qb, orderByColumn, page, pageSize);
 
