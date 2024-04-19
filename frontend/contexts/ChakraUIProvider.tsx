@@ -16,7 +16,10 @@ export default function ChakraUIProvider({
     <ChakraProvider
       theme={theme}
       toastOptions={{
-        defaultOptions: { position: "bottom-right", isClosable: true },
+        defaultOptions: {
+          position: "bottom-right",
+          isClosable: true,
+        },
       }}
     >
       {children}
