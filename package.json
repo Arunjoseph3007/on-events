@@ -36,6 +36,9 @@
     "vite": "^5.2.8"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
@@ -43,6 +46,7 @@
     "cors": "^2.8.5",
     "drizzle-orm": "^0.30.5",
     "express": "^4.19.1",
+    "framer-motion": "^11.1.5",
     "jose": "^5.2.3",
     "morgan": "^1.10.0",
     "postgres": "^3.4.4",
