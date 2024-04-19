@@ -27,7 +27,7 @@ app.use(express.static("./public"));
 app.use(playMiddleware);
 
 // Health check route
-app.get("/", (_, res) => res.json({ hello: "world" }));
+app.get("/health", (_, res) => res.json({ hello: "world" }));
 
 // Resource routers
 app.use(AccountsRouter.path, AccountsRouter.router);

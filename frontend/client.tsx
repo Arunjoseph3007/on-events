@@ -1,7 +1,13 @@
 import { hydrateRoot } from "react-dom/client";
 import React from "react";
-import App from "./app";
+import Router from "./router";
+import { BrowserRouter } from "react-router-dom";
 
 console.log("Hydration started...");
 
-hydrateRoot(document.getElementById("app")!, <App />);
+hydrateRoot(
+  document.getElementById("app")!,
+  <BrowserRouter>
+    <Router />
+  </BrowserRouter>
+);

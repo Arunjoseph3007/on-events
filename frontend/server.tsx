@@ -1,6 +1,13 @@
 import { renderToString } from "react-dom/server";
-import App from "./app";
+import { StaticRouter } from "react-router-dom/server";
+import Router from "./router";
 
-export const render = () => {
-  return renderToString(<App />);
+type TRenderProps = { path: string };
+
+export const render = ({ path }: TRenderProps) => {
+  return renderToString(
+    <StaticRouter location={path}>
+      <Router />
+    </StaticRouter>
+  );
 };
