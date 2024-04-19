@@ -19,7 +19,7 @@ createServer({
 
     try {
       const template = await vite.transformIndexHtml(url, HTML);
-      const { render } = await vite.ssrLoadModule("/src/pages/server.tsx");
+      const { render } = await vite.ssrLoadModule("/frontend/server.tsx");
 
       const html = template.replace(`<!--ssr-outlet-->`, render);
       res.status(200).set({ "Content-Type": "text/html" }).end(html);

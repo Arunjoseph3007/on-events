@@ -1,6 +1,6 @@
 import app from "../src/base";
 import express from "express";
-import { render } from "../src/pages/server";
+import { render } from "../frontend/server";
 import fs from "fs";
 import errorHandlingMiddleware from "../src/middlewares/errorHandling";
 import path from "path";

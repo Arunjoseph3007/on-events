@@ -7,7 +7,7 @@
     "lint": "tsc --noEmit",
     "start": "tsc && node src/index.js",
     "build:client": "vite build --outDir dist/client",
-    "build:server": "vite build --ssr src/pages/server.tsx --outDir dist/server",
+    "build:server": "vite build --ssr frontend/server.tsx --outDir dist/server",
     "build": "esbuild src/index.ts --platform=node --outfile=dist/index.js --bundle",
     "watch": "esbuild src/index.ts --platform=node --outfile=dist/watch.js --bundle --watch",
     "dev:frontend": "esbuild src/dev.ts --platform=node --outfile=dist/frontend.js --bundle --external:vite && node dist/frontend.js",
