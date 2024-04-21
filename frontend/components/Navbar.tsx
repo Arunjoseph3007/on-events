@@ -15,6 +15,7 @@ import {
   Center,
   Image,
   HStack,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
@@ -47,7 +48,7 @@ export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Box py={2} px={4} boxShadow={"base"}>
+    <Box h="10vh" py={2} px={4} boxShadow={"base"}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <HStack gap={3}>
           <Image boxSize="25px" src="/logo.png" />
@@ -84,7 +85,9 @@ export default function Navbar() {
                 </Center>
                 <br />
                 <Center>
-                  <p>Username</p>
+                  <ChakraLink as={Link} to="/dashboard">
+                    Arun Joseph
+                  </ChakraLink>
                 </Center>
                 <br />
                 <MenuDivider />
