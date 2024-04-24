@@ -37,7 +37,7 @@ export default function AuthContextProvider({
   children: ReactNode;
 }) {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<TUser | null>(null);
   const [error, setError] = useState<any>(null);
   const toast = useToast();
@@ -195,4 +195,5 @@ function IfSignedOut({ children }: { children: ReactNode }) {
 export const Auth = {
   IfSignedIn,
   IfSignedOut,
+  TOKEN_KEY,
 };

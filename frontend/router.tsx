@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 // Pages
 import HomePage from "./pages/index";
 import NotFoundPage from "./pages/404";
@@ -22,11 +23,13 @@ export default function Router() {
         <Route element={<TopNavLayout />}>
           <Route index element={<HomePage />} />
           <Route element={<SideNavLayout />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/workflows" element={<WorkflowsPage />} />
-            <Route path="/executions" element={<ExecutionsPage />} />
-            <Route path="/credentials" element={<CredentialsPage />} />
-            <Route path="/add" element={<AddPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/workflows" element={<WorkflowsPage />} />
+              <Route path="/executions" element={<ExecutionsPage />} />
+              <Route path="/credentials" element={<CredentialsPage />} />
+              <Route path="/add" element={<AddPage />} />
+            </Route>
           </Route>
         </Route>
         <Route path="/login" element={<LoginPage />} />
