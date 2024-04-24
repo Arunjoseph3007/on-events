@@ -36,6 +36,10 @@ app.use("*", async (req, res) => {
     d(__dirname, "..", ".vercel");
     d(__dirname, "..", ".vercel/output");
     d(__dirname, "..", ".vercel/output/client");
+    d(__dirname, "..", ".vercel/output/server");
+    d(__dirname, "..", ".vercel/output/static");
+    d(__dirname, "..", ".vercel/output/static/client");
+    d(__dirname, "..", ".vercel/output/static/server");
 
     // const { render } = await import(
     //   // @ts-ignore
