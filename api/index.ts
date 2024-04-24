@@ -1,6 +1,5 @@
 import app from "../src/base";
 import express from "express";
-import { render } from "../frontend/server";
 import fs from "fs";
 import errorHandlingMiddleware from "../src/middlewares/errorHandling";
 import path from "path";
@@ -19,10 +18,13 @@ app.use(
   )
 );
 
-app.use("*", async (_, res) => {
+app.use("*", async (req, res) => {
   try {
     // @ts-ignore
-    const html = template.replace(`<!--ssr-outlet-->`, render);
+    const { render } = await import("../.vercel/output/static/server/server.mjs");
+    const rendered = await render({ path: req.originalUrl }) as string;
+
+    const html = template.replace(`<!--ssr-outlet-->`, rendered);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
   } catch (error) {
     res.status(500).end(error);
