@@ -9,6 +9,13 @@ const template = fs.readFileSync(
   "utf-8"
 );
 
+console.log(fs.readdirSync(path.resolve(__dirname, "..")));
+console.log(fs.readdirSync(path.resolve(__dirname, "..", ".vercel")));
+console.log(fs.readdirSync(path.resolve(__dirname, "..", ".vercel/output")));
+console.log(
+  fs.readdirSync(path.resolve(__dirname, "..", ".vercel/output/client"))
+);
+
 app.use(
   express.static(
     path.resolve(__dirname, "..", ".vercel/output/static/client"),
@@ -20,9 +27,11 @@ app.use(
 
 app.use("*", async (req, res) => {
   try {
-    // @ts-ignore
-    const { render } = await import("../.vercel/output/static/server/server.mjs");
-    const rendered = await render({ path: req.originalUrl }) as string;
+    const { render } = await import(
+      // @ts-ignore
+      "../.vercel/output/static/server/server.mjs"
+    );
+    const rendered = (await render({ path: req.originalUrl })) as string;
 
     const html = template.replace(`<!--ssr-outlet-->`, rendered);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
