@@ -12,8 +12,14 @@ import {
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/auth";
+import { useState } from "react";
 
 export default function LoginPage() {
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   return (
     <Flex minH={"100vh"} align={"center"} justify={"center"}>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
@@ -29,17 +35,28 @@ export default function LoginPage() {
           boxShadow={"lg"}
           p={8}
         >
-          <Stack spacing={4}>
+          <Stack
+            as="form"
+            onSubmit={(e) => {
+              e.preventDefault();
+
+              login(email, password);
+            }}
+            spacing={4}
+          >
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input onChange={(e) => setEmail(e.target.value)} type="email" />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+              />
             </FormControl>
             <Stack spacing={10}>
-              <Button>Sign in</Button>
+              <Button type="submit">Sign in</Button>
             </Stack>
           </Stack>
 

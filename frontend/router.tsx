@@ -7,6 +7,7 @@ import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
 import DashboardPage from "./pages/dashboard/dashboard";
 import WorkflowsPage from "./pages/dashboard/workflows";
+import ExecutionsPage from "./pages/dashboard/executions";
 import CredentialsPage from "./pages/dashboard/credentials";
 import AddPage from "./pages/dashboard/add";
 // Layouts
@@ -23,6 +24,7 @@ export default function Router() {
           <Route element={<SideNavLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/workflows" element={<WorkflowsPage />} />
+            <Route path="/executions" element={<ExecutionsPage />} />
             <Route path="/credentials" element={<CredentialsPage />} />
             <Route path="/add" element={<AddPage />} />
           </Route>

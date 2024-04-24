@@ -13,6 +13,7 @@ import { setupPagination } from "./utils/pagination";
 import { rateLimiter } from "./middlewares/ratelimit";
 
 const app = express();
+const api = "/api";
 
 setupPagination(app);
 // Middlewares
@@ -30,8 +31,8 @@ app.use(playMiddleware);
 app.get("/health", (_, res) => res.json({ hello: "world" }));
 
 // Resource routers
-app.use(AccountsRouter.path, AccountsRouter.router);
-app.use(WorflowsRouter.path, WorflowsRouter.router);
-app.use(CredentialsRouter.path, CredentialsRouter.router);
+app.use(api + AccountsRouter.path, AccountsRouter.router);
+app.use(api + WorflowsRouter.path, WorflowsRouter.router);
+app.use(api + CredentialsRouter.path, CredentialsRouter.router);
 
 export default app;

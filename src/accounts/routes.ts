@@ -64,8 +64,8 @@ router.post("/refresh", async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
 
     const user = await verifyToken(refreshToken);
-    const { id, email, name } = user;
-    const accessToken = await createAccessToken(id, email, name);
+    const { id, email, fullName } = user;
+    const accessToken = await createAccessToken(id, email, fullName);
 
     res.json({ accessToken, user });
   } catch (error) {

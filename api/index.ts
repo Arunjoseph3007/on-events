@@ -6,18 +6,22 @@ import errorHandlingMiddleware from "../src/middlewares/errorHandling";
 import path from "path";
 
 const template = fs.readFileSync(
-  path.resolve(__dirname, "..", "dist/client/index.html"),
+  path.resolve(__dirname, "..", ".vercel/output/static/client/index.html"),
   "utf-8"
 );
 
 app.use(
-  express.static(path.resolve(__dirname, "..", "dist/client"), {
-    index: false,
-  })
+  express.static(
+    path.resolve(__dirname, "..", ".vercel/output/static/client"),
+    {
+      index: false,
+    }
+  )
 );
 
 app.use("*", async (_, res) => {
   try {
+    // @ts-ignore
     const html = template.replace(`<!--ssr-outlet-->`, render);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
   } catch (error) {

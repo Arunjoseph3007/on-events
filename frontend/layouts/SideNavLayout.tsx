@@ -1,10 +1,17 @@
 import { AddIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Tooltip } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Tooltip,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import { HomeIcon } from "../icons/home";
 import { ThunderboltIcon } from "../icons/thunderbolt";
 import { CredentialsIcon } from "../icons/credentials";
+import { RocketIcon } from "../icons/rocket";
 
 export default function SideNavLayout() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -17,7 +24,7 @@ export default function SideNavLayout() {
         boxShadow="base"
         direction="column"
         alignItems="flex-start"
-        gap={3}
+        gap={4}
         p={4}
         position="relative"
       >
@@ -58,6 +65,7 @@ export default function SideNavLayout() {
             icon: ThunderboltIcon,
             link: "/workflows",
           },
+          { label: "Your Executions", icon: RocketIcon, link: "/executions" },
           { label: "Credentials", icon: CredentialsIcon, link: "/credentials" },
         ].map((elem) => (
           <Tooltip
@@ -67,17 +75,27 @@ export default function SideNavLayout() {
             placement="right"
             borderRadius={3}
           >
-            <Link to={elem.link}>
-              <Button
-                justifyContent="flex-start"
-                w={btnWidth}
-                variant="ghost"
-                leftIcon={<elem.icon boxSize={6} />}
-                colorScheme="gray"
-              >
-                {isExpanded && elem.label}
-              </Button>
-            </Link>
+            <NavLink to={elem.link}>
+              {({ isActive }) => (
+                <Button
+                  justifyContent="flex-start"
+                  w={btnWidth}
+                  variant="ghost"
+                  leftIcon={<elem.icon boxSize={6} />}
+                  colorScheme="gray"
+                  transition={"ease"}
+                  transitionDuration={"300ms"}
+                  transitionProperty={"all"}
+                  bg={
+                    isActive
+                      ? useColorModeValue("green.50", "gray.900")
+                      : undefined
+                  }
+                >
+                  {isExpanded && elem.label}
+                </Button>
+              )}
+            </NavLink>
           </Tooltip>
         ))}
       </Flex>

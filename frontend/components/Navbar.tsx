@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
+import { Auth, useAuth } from "../contexts/auth";
 
 interface Props {
   children: React.ReactNode;
@@ -46,6 +47,7 @@ const NavLink = (props: Props) => {
 
 export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
+  const { user } = useAuth();
 
   return (
     <Box h="10vh" py={2} px={4} boxShadow={"base"}>
@@ -68,41 +70,52 @@ export default function Navbar() {
               {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             </Button>
 
-            <Menu>
-              <MenuButton
-                as={Button}
-                rounded={"full"}
-                variant={"link"}
-                cursor={"pointer"}
-                minW={0}
-              >
-                <Avatar size={"sm"} name="Arun Joseph" />
-              </MenuButton>
-              <MenuList alignItems={"center"}>
-                <br />
-                <Center>
-                  <Avatar size={"2xl"} name="Arun Joseph" />
-                </Center>
-                <br />
-                <Center>
-                  <ChakraLink as={Link} to="/dashboard">
-                    Arun Joseph
-                  </ChakraLink>
-                </Center>
-                <br />
-                <MenuDivider />
-                <MenuItem>Your Servers</MenuItem>
-                <MenuItem>Account Settings</MenuItem>
-                <MenuItem>Logout</MenuItem>
-              </MenuList>
-            </Menu>
+            <Auth.IfSignedIn>
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded={"full"}
+                  variant={"link"}
+                  cursor={"pointer"}
+                  minW={0}
+                >
+                  <Avatar size={"sm"} name="Arun Joseph" />
+                </MenuButton>
+                <MenuList alignItems={"center"}>
+                  <br />
+                  <Center>
+                    <Avatar size={"2xl"} name="Arun Joseph" />
+                  </Center>
+                  <br />
+                  <Center>
+                    <ChakraLink as={Link} to="/dashboard">
+                      {user?.fullName}
+                    </ChakraLink>
+                  </Center>
+                  <Center>
+                    <Text
+                      fontSize="sm"
+                      color={useColorModeValue("blackAlpha.600", "gray.400")}
+                    >
+                      {user?.email}
+                    </Text>
+                  </Center>
+                  <MenuDivider />
+                  <MenuItem>Your Servers</MenuItem>
+                  <MenuItem>Account Settings</MenuItem>
+                  <MenuItem>Logout</MenuItem>
+                </MenuList>
+              </Menu>
+            </Auth.IfSignedIn>
 
-            <Link to="/login">
-              <Button>Login</Button>
-            </Link>
-            <Link to="/signup">
-              <Button variant="outline">Sign up</Button>
-            </Link>
+            <Auth.IfSignedOut>
+              <Link to="/login">
+                <Button>Login</Button>
+              </Link>
+              <Link to="/signup">
+                <Button variant="outline">Sign up</Button>
+              </Link>
+            </Auth.IfSignedOut>
           </Stack>
         </Flex>
       </Flex>
