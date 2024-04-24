@@ -4,11 +4,12 @@ import fs from "fs";
 import errorHandlingMiddleware from "../src/middlewares/errorHandling";
 import path from "path";
 
-const template = fs.readFileSync(
-  path.resolve(__dirname, "..", ".vercel/output/static/client/index.html"),
-  "utf-8"
-);
+// const template = fs.readFileSync(
+//   path.resolve(__dirname, "..", ".vercel/output/static/client/index.html"),
+//   "utf-8"
+// );
 
+const template=''
 
 app.use(
   express.static(
