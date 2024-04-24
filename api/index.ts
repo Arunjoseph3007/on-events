@@ -9,12 +9,6 @@ const template = fs.readFileSync(
   "utf-8"
 );
 
-console.log(fs.readdirSync(path.resolve(__dirname, "..")));
-console.log(fs.readdirSync(path.resolve(__dirname, "..", ".vercel")));
-console.log(fs.readdirSync(path.resolve(__dirname, "..", ".vercel/output")));
-console.log(
-  fs.readdirSync(path.resolve(__dirname, "..", ".vercel/output/client"))
-);
 
 app.use(
   express.static(
@@ -27,6 +21,12 @@ app.use(
 
 app.use("*", async (req, res) => {
   try {
+    console.error(fs.readdirSync(path.resolve(__dirname, "..")));
+    console.error(fs.readdirSync(path.resolve(__dirname, "..", ".vercel")));
+    console.error(fs.readdirSync(path.resolve(__dirname, "..", ".vercel/output")));
+    console.error(
+      fs.readdirSync(path.resolve(__dirname, "..", ".vercel/output/client"))
+    );
     const { render } = await import(
       // @ts-ignore
       "../.vercel/output/static/server/server.mjs"
