@@ -10,23 +10,20 @@ import {
   json,
   pgEnum,
 } from "drizzle-orm/pg-core";
+import {
+  CredentialTypeValues,
+  EventTypeValues,
+  TriggerTypeValues,
+} from "../../common/schema";
 
-export const triggerTypeEnum = pgEnum("triggerTypeEnum", [
-  "github:commit-received",
-  "gmail:mail-received",
-  "gcalender:event-created",
-]);
+export const triggerTypeEnum = pgEnum("triggerTypeEnum", TriggerTypeValues);
 
-export const eventTypeEnum = pgEnum("eventTypeEnum", [
-  "gmail:send-mail",
-  "gsheet:append-row",
-  "discord:send-message",
-]);
+export const eventTypeEnum = pgEnum("eventTypeEnum", EventTypeValues);
 
-export const credentialTypeEnum = pgEnum("credentialTypeEnum", [
-  ...triggerTypeEnum.enumValues,
-  ...eventTypeEnum.enumValues,
-]);
+export const credentialTypeEnum = pgEnum(
+  "credentialTypeEnum",
+  CredentialTypeValues
+);
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),

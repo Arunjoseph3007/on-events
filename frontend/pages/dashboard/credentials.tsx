@@ -18,7 +18,8 @@ import moment from "moment";
 import type { TPaginationResponse } from "../../../src/utils/pagination";
 import type { TCredential } from "../../../src/db/schema";
 import ThirdPartyAppChip from "../../components/dashboard/ThirdPartyAppChipp";
-import { AddIcon } from "@chakra-ui/icons";
+import { DeleteIcon } from "@chakra-ui/icons";
+import AddCredDrawer from "../../components/dashboard/AddCredDrawer";
 
 export default function CredentialsPage() {
   const credsQuery = useFetch<TPaginationResponse<TCredential[]>>(
@@ -28,11 +29,15 @@ export default function CredentialsPage() {
 
   return (
     <Box p={12}>
+      {/* Header */}
       <HStack>
         <Heading flex={1}>Your Credentials</Heading>
-        <Button leftIcon={<AddIcon />}>Add</Button>
+        <AddCredDrawer />
       </HStack>
-      <Divider py={2} />
+
+      <Divider my={2} />
+
+      {/* Table */}
       {credsQuery.isSuccess && (
         <TableContainer>
           <Table colorScheme="gray">
@@ -42,6 +47,7 @@ export default function CredentialsPage() {
                 <Th>Type</Th>
                 <Th>Client Id</Th>
                 <Th>Expiry</Th>
+                <Th>Delete</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -62,6 +68,11 @@ export default function CredentialsPage() {
                   </Td>
                   <Td>
                     {cred.expiry ? moment(cred.expiry).fromNow() : "No expiry"}
+                  </Td>
+                  <Td>
+                    <Button colorScheme="gray" variant="ghost">
+                      <DeleteIcon boxSize={5} />
+                    </Button>
                   </Td>
                 </Tr>
               ))}
