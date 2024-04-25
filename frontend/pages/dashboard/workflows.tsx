@@ -17,6 +17,7 @@ import moment from "moment";
 import type { TPaginationResponse } from "../../../src/utils/pagination";
 import type { TWorkflow } from "../../../src/db/schema";
 import ThirdPartyAppChip from "../../components/dashboard/ThirdPartyAppChipp";
+import { Link } from "react-router-dom";
 
 export default function WorkflowsPage() {
   const workflowsQuery = useFetch<TPaginationResponse<TWorkflow[]>>(
@@ -50,7 +51,9 @@ export default function WorkflowsPage() {
                     </Text>
                   </Td>
                   <Td>
-                    <Text fontWeight={600}>{workflow.name}</Text>
+                    <Link to={"/workflows/" + workflow.id}>
+                      <Text fontWeight={600}>{workflow.name}</Text>
+                    </Link>
                   </Td>
                   <Td>
                     <ThirdPartyAppChip type={workflow.triggerType} />

@@ -23,7 +23,7 @@ export default function ReactQueryProvider({
 export function useFetch<TData = any>(
   url: string,
   props: Omit<
-    UndefinedInitialDataOptions<TData, AxiosError, TData, string[]>,
+    UndefinedInitialDataOptions<TData, AxiosError, TData, any>,
     "queryFn"
   >
 ) {

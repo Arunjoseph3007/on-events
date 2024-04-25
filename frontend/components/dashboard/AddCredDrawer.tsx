@@ -24,9 +24,16 @@ import ThirdPartyAppChip from "../../components/dashboard/ThirdPartyAppChipp";
 import { AddIcon, ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
 import { useRef, useState } from "react";
 import { CredentialTypeValues } from "../../../common/schema";
+import { useQueryClient } from "@tanstack/react-query";
 
 const OAuthActions: Record<TCredentialType, () => Promise<boolean>> = {
-  "discord:send-message": async () => true,
+  "discord:send-message": async () => {
+    window.location.replace(
+      "https://discord.com/oauth2/authorize?client_id=1223498118847402024&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000&scope=identify"
+    );
+
+    return true;
+  },
   "gcalender:event-created": async () => true,
   "github:commit-received": async () => true,
   "gmail:mail-received": async () => true,
@@ -35,6 +42,7 @@ const OAuthActions: Record<TCredentialType, () => Promise<boolean>> = {
 };
 
 export default function AddCredDrawer() {
+  const qClient = useQueryClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [credType, setCredType] = useState<TCredentialType>();
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -61,6 +69,7 @@ export default function AddCredDrawer() {
           title: "Credential added successfully",
           status: "success",
         });
+        qClient.invalidateQueries({ queryKey: ["workflows"] });
       } else {
         toast({
           title: "Something went wrong",
