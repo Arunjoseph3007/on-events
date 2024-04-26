@@ -1,6 +1,6 @@
-import { Box } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Box, Button, HStack, Heading } from "@chakra-ui/react";
+import { type ComponentType, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -13,7 +13,27 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useFetch } from "../../../libs/reactQuery";
-import type { TNode, TWorkflow } from "../../../../src/db/schema";
+import type {
+  TCredential,
+  TCredentialType,
+  TNode,
+  TWorkflow,
+} from "../../../../src/db/schema";
+import { EditIcon } from "@chakra-ui/icons";
+import WorkflowNodeController from "../../../components/dashboard/WorkflowNodeController";
+import SelectedNodePanel from "../../../components/dashboard/SelectedNodePanel";
+
+const nodeTypes: Record<
+  TCredentialType,
+  ComponentType<{ type: TCredentialType }>
+> = {
+  "discord:send-message": WorkflowNodeController,
+  "gcalender:event-created": WorkflowNodeController,
+  "github:commit-received": WorkflowNodeController,
+  "gmail:mail-received": WorkflowNodeController,
+  "gmail:send-mail": WorkflowNodeController,
+  "gsheet:append-row": WorkflowNodeController,
+};
 
 export default function SingleWorkflowPage() {
   const params = useParams<"workflowId">();
@@ -24,7 +44,7 @@ export default function SingleWorkflowPage() {
       enabled: !!params.workflowId,
     }
   );
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<TCredential>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
@@ -34,11 +54,16 @@ export default function SingleWorkflowPage() {
 
     let y = 100,
       x = 400;
+    const { nodes, ...triggerData } = workflowQuery.data;
     const allWorkflowNodes: Node[] = [
       {
         id: "trigger",
         position: { x, y },
-        data: { label: workflowQuery.data.triggerType },
+        type: workflowQuery.data.triggerType,
+        data: {
+          type: workflowQuery.data.triggerType,
+          ...triggerData,
+        },
       },
     ];
     const allEdges: Edge[] = [];
@@ -48,7 +73,11 @@ export default function SingleWorkflowPage() {
       allWorkflowNodes.push({
         id: n.internalId.toString(),
         position: { x, y },
-        data: { label: n.eventType },
+        type: n.eventType,
+        data: {
+          type: n.eventType,
+          ...n,
+        },
       });
 
       const parentId = n.parentNodeId || "trigger";
@@ -70,8 +99,30 @@ export default function SingleWorkflowPage() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes as any}
       >
-        <Panel position="top-left">{params.workflowId}</Panel>
+        {workflowQuery.isSuccess && (
+          <Panel position="top-left">
+            <HStack
+              gap={8}
+              borderColor={"ActiveBorder"}
+              borderWidth={2}
+              px={6}
+              py={2}
+              borderRadius={5}
+              bg="Background"
+            >
+              <Heading fontSize="2xl">{workflowQuery.data.name}</Heading>
+              <Link to={`/workflows/${params.workflowId}/edit`}>
+                <Button size="sm" leftIcon={<EditIcon />}>
+                  Edit
+                </Button>
+              </Link>
+            </HStack>
+          </Panel>
+        )}
+
+        <SelectedNodePanel />
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>

@@ -36,6 +36,7 @@ export default function SideNavLayout() {
           w="20px"
           h="40px"
           boxShadow="base"
+          zIndex={999}
           onClick={() => setIsExpanded((p) => !p)}
         >
           {isExpanded ? <ChevronLeftIcon /> : <ChevronRightIcon />}
