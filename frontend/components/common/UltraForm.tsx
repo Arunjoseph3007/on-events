@@ -18,7 +18,7 @@ import {
   Switch,
   Textarea,
 } from "@chakra-ui/react";
-import { createContext, useContext, useState } from "react";
+import { useState } from "react";
 import { v4 as uuid } from "uuid";
 
 export enum TUltraFormFeildType {
@@ -55,13 +55,6 @@ type TUtraFormProps = {
   onSubmit?: (data: {}) => Promise<void>;
 };
 
-type TUltraContext = {
-  state: Record<string, TPotentialData | undefined>;
-  setState: React.Dispatch<
-    React.SetStateAction<Record<string, TPotentialData | undefined>>
-  >;
-};
-
 const DefaultDeafaults: Record<TUltraFormFeildType, string | number | boolean> =
   {
     boolean: false,
@@ -70,9 +63,6 @@ const DefaultDeafaults: Record<TUltraFormFeildType, string | number | boolean> =
     select: "",
     string: "",
   };
-
-// TODO: remove this context just pass props
-const UltraContext = createContext<TUltraContext>({} as any);
 
 export default function UltraForm({ data, title }: TUtraFormProps) {
   const [state, setState] = useState(
@@ -90,37 +80,47 @@ export default function UltraForm({ data, title }: TUtraFormProps) {
   );
 
   return (
-    <UltraContext.Provider value={{ setState, state }}>
-      <Box>
-        {title && <Heading fontSize="lg">{title}</Heading>}
+    <Box>
+      {title && <Heading fontSize="lg">{title}</Heading>}
 
-        {data.map((feild) => (
-          <FormControl
-            mt={1}
-            mb={3}
-            isRequired={feild.required}
-            isReadOnly={feild.readonly}
-            key={feild.label}
-          >
-            <FormLabel htmlFor={"__ultra__" + feild.label}>
-              {feild.label}
-            </FormLabel>
+      {data.map((feild) => (
+        <FormControl
+          mt={1}
+          mb={3}
+          isRequired={feild.required}
+          isReadOnly={feild.readonly}
+          key={feild.label}
+        >
+          <FormLabel htmlFor={"__ultra__" + feild.label}>
+            {feild.label}
+          </FormLabel>
 
-            <MultiplyUltraFormFeild {...feild} />
+          <MultiplyUltraFormFeild
+            state={state}
+            setState={setState}
+            {...feild}
+          />
 
-            {feild.helperText && (
-              <FormHelperText>{feild.helperText}</FormHelperText>
-            )}
-          </FormControl>
-        ))}
-      </Box>
-    </UltraContext.Provider>
+          {feild.helperText && (
+            <FormHelperText>{feild.helperText}</FormHelperText>
+          )}
+        </FormControl>
+      ))}
+    </Box>
   );
 }
 
-function MultiplyUltraFormFeild({ isMultiple, ...props }: TUltraFormFeild) {
-  const { state, setState } = useContext(UltraContext);
-
+function MultiplyUltraFormFeild({
+  isMultiple,
+  setState,
+  state,
+  ...props
+}: TUltraFormFeild & {
+  state: Record<string, TPotentialData | undefined>;
+  setState: React.Dispatch<
+    React.SetStateAction<Record<string, TPotentialData | undefined>>
+  >;
+}) {
   if (!isMultiple) {
     return (
       <UltraFormFeild
