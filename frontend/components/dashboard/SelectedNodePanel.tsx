@@ -56,6 +56,7 @@ export default function SelectedNodePanel() {
           h="85vh"
           borderRadius={10}
           p={3}
+          pr={1}
         >
           <HStack borderBottomWidth={2} pb={2} mb={2}>
             <Image
@@ -74,7 +75,7 @@ export default function SelectedNodePanel() {
             </Button>
           </HStack>
 
-          <Box overflowY="auto" flex={1}>
+          <Box pr={2} overflowY="auto" flex={1}>
             <FormControl isRequired>
               <FormLabel>Resource ID</FormLabel>
               <Input value={selectedNode.data.resourceId} />

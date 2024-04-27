@@ -19,6 +19,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { createContext, useContext, useState } from "react";
+import { v4 as uuid } from "uuid";
 
 export enum TUltraFormFeildType {
   String = "string",
@@ -30,11 +31,11 @@ export enum TUltraFormFeildType {
 
 type TPotentialData =
   | string
-  | string[]
   | number
-  | number[]
   | boolean
-  | boolean[];
+  | [string, string][]
+  | [number, string][]
+  | [boolean, string][];
 
 type TUltraFormFeild = {
   label: string;
@@ -70,6 +71,7 @@ const DefaultDeafaults: Record<TUltraFormFeildType, string | number | boolean> =
     string: "",
   };
 
+// TODO: remove this context just pass props
 const UltraContext = createContext<TUltraContext>({} as any);
 
 export default function UltraForm({ data, title }: TUtraFormProps) {
@@ -81,7 +83,7 @@ export default function UltraForm({ data, title }: TUtraFormProps) {
         const defVal = DefaultDeafaults[element.type];
 
         // @ts-ignore
-        acc[element.label] = element.isMultiple ? [defVal] : defVal;
+        acc[element.label] = element.isMultiple ? [[defVal, uuid()]] : defVal;
       }
       return acc;
     }, {})
@@ -132,43 +134,45 @@ function MultiplyUltraFormFeild({ isMultiple, ...props }: TUltraFormFeild) {
 
   return (
     <Flex gap={2} direction="column">
-      {(state[props.label] as Array<string | number>).map((value, idx) => (
-        <HStack key={idx}>
-          <UltraFormFeild
-            value={value}
-            setValue={(val) =>
-              setState((p) => {
-                const arr = p[props.label] as any[];
-                arr[idx] = val;
-                return { ...p, [props.label]: arr };
-              })
-            }
-            isMultiple={true}
-            {...props}
-          />
-          <Button
-            onClick={() => {
-              setState((p) => {
-                const arr = p[props.label] as any[];
+      {(state[props.label] as Array<[string | number | boolean, string]>).map(
+        (value, idx) => (
+          <HStack key={value[1]}>
+            <UltraFormFeild
+              value={value[0]}
+              setValue={(val) =>
+                setState((p) => {
+                  const arr = p[props.label] as any[];
+                  arr[idx][0] = val;
+                  return { ...p, [props.label]: arr };
+                })
+              }
+              isMultiple={true}
+              {...props}
+            />
+            <Button
+              onClick={() => {
+                setState((p) => {
+                  const arr = p[props.label] as any[];
 
-                return {
-                  ...p,
-                  [props.label]: [...arr.slice(0, idx - 1), ...arr.slice(idx)],
-                };
-              });
-            }}
-            colorScheme="gray"
-          >
-            <DeleteIcon />
-          </Button>
-        </HStack>
-      ))}
+                  return {
+                    ...p,
+                    [props.label]: arr.filter((el) => el[1] != value[1]),
+                  };
+                });
+              }}
+              colorScheme="gray"
+            >
+              <DeleteIcon />
+            </Button>
+          </HStack>
+        )
+      )}
 
       <Button
         onClick={() => {
           setState((p) => {
             const arr = p[props.label] as any[];
-            arr.push(DefaultDeafaults[props.type]);
+            arr.push([DefaultDeafaults[props.type], uuid()]);
 
             return { ...p, [props.label]: arr };
           });

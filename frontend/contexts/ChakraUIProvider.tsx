@@ -3,15 +3,16 @@ import {
   extendTheme,
   withDefaultColorScheme,
 } from "@chakra-ui/react";
+import { mode } from "@chakra-ui/theme-tools";
 import type { ReactNode } from "react";
 
 const GlobalStyles = {
-  global: {
+  global: (props: Record<string, any>) => ({
     "::-webkit-scrollbar": {
       width: "10px",
     },
     "::-webkit-scrollbar-track": {
-      background: "#f1f1f1cc",
+      background: mode("#f1f1f1cc",'#55555555')(props),
       borderRadius: "100px",
     },
     "::-webkit-scrollbar-thumb": {
@@ -21,7 +22,7 @@ const GlobalStyles = {
         background: "#aaa",
       },
     },
-  },
+  }),
 };
 
 const theme = extendTheme(withDefaultColorScheme({ colorScheme: "whatsapp" }), {
