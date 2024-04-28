@@ -9,6 +9,12 @@ import {
   HStack,
   Heading,
   Input,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuGroup,
+  MenuItem,
+  MenuList,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -16,9 +22,11 @@ import {
   NumberInputStepper,
   Select,
   Switch,
+  Text,
   Textarea,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { Fragment, RefObject, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 
 export enum TUltraFormFeildType {
@@ -49,9 +57,18 @@ type TUltraFormFeild = {
   placeholder?: string;
 };
 
+type TSuggestion = {
+  key: string;
+  label?: string;
+  description?: string;
+};
+
+type TTextSuggestions = { groupName: string; data: TSuggestion[] }[];
+
 type TUtraFormProps = {
   title?: string;
   data: TUltraFormFeild[];
+  suggestions?: TTextSuggestions;
   onSubmit?: (data: {}) => Promise<void>;
 };
 
@@ -64,7 +81,11 @@ const DefaultDeafaults: Record<TUltraFormFeildType, string | number | boolean> =
     string: "",
   };
 
-export default function UltraForm({ data, title }: TUtraFormProps) {
+export default function UltraForm({
+  data,
+  title,
+  suggestions,
+}: TUtraFormProps) {
   const [state, setState] = useState(
     data.reduce<Record<string, TPotentialData | undefined>>((acc, element) => {
       if (element.initialValue) {
@@ -98,6 +119,7 @@ export default function UltraForm({ data, title }: TUtraFormProps) {
           <MultiplyUltraFormFeild
             state={state}
             setState={setState}
+            suggestions={suggestions}
             {...feild}
           />
 
@@ -120,6 +142,7 @@ function MultiplyUltraFormFeild({
   setState: React.Dispatch<
     React.SetStateAction<Record<string, TPotentialData | undefined>>
   >;
+  suggestions?: TTextSuggestions;
 }) {
   if (!isMultiple) {
     return (
@@ -192,18 +215,44 @@ function UltraFormFeild({
   selectOptions,
   setValue,
   value,
-}: TUltraFormFeild & { value: any; setValue: (p: any) => void }) {
+  suggestions,
+}: TUltraFormFeild & {
+  value: any;
+  setValue: (p: any) => void;
+  suggestions?: TTextSuggestions;
+}) {
   const iden = "__ultra__" + label;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+
+  const onSuggestionSelect = (suggestion: TSuggestion) => {
+    btnRef.current?.focus();
+    setValue(`${value}{{${suggestion.key}}}`);
+    onClose();
+  };
 
   switch (type) {
     case TUltraFormFeildType.String: {
       return (
-        <Input
-          onChange={(e) => setValue(e.target.value)}
-          id={iden}
-          placeholder={placeholder}
-          type="text"
-        />
+        <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+          <Input
+            id={iden}
+            ref={btnRef as RefObject<HTMLInputElement>}
+            type="text"
+            onChange={(e) => {
+              setValue(e.target.value);
+              onOpen();
+            }}
+            onFocus={onOpen}
+            value={value}
+            placeholder={placeholder}
+          />
+          <MenuButton as="div" w="100%" />
+          <SuggestionMenu
+            onSuggestionSelect={onSuggestionSelect}
+            suggestions={suggestions}
+          />
+        </Menu>
       );
     }
 
@@ -221,11 +270,24 @@ function UltraFormFeild({
 
     case TUltraFormFeildType.Multiline: {
       return (
-        <Textarea
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={placeholder}
-          id={iden}
-        />
+        <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+          <Textarea
+            placeholder={placeholder}
+            id={iden}
+            ref={btnRef as RefObject<HTMLTextAreaElement>}
+            onChange={(e) => {
+              setValue(e.target.value);
+              onOpen();
+            }}
+            onFocus={onOpen}
+            value={value}
+          />
+          <MenuButton as="div" w="100%" />
+          <SuggestionMenu
+            onSuggestionSelect={onSuggestionSelect}
+            suggestions={suggestions}
+          />
+        </Menu>
       );
     }
 
@@ -252,4 +314,46 @@ function UltraFormFeild({
     default:
       return null;
   }
+}
+
+function SuggestionMenu({
+  onSuggestionSelect,
+  suggestions,
+}: {
+  suggestions?: TTextSuggestions;
+  onSuggestionSelect: (p: TSuggestion) => void;
+}) {
+  if (!suggestions || !onSuggestionSelect) return null;
+
+  return (
+    <MenuList h="250px" overflow="auto">
+      {suggestions.map((suggestionGroup) => (
+        <MenuGroup
+          key={suggestionGroup.groupName}
+          title={suggestionGroup.groupName.toUpperCase()}
+        >
+          {suggestionGroup.data.map((sugg) => (
+            <Fragment key={sugg.key}>
+              <MenuDivider my={0} />
+              <MenuItem
+                display="flex"
+                flexDirection="column"
+                alignItems="flex-start"
+                onClick={() => onSuggestionSelect(sugg)}
+              >
+                <Text fontWeight={600} fontSize="xl" textTransform="capitalize">
+                  {sugg.label || sugg.key.replace("__", " ")}
+                </Text>
+                {sugg.description && (
+                  <Text fontSize="sm" color="GrayText">
+                    {sugg.description}
+                  </Text>
+                )}
+              </MenuItem>
+            </Fragment>
+          ))}
+        </MenuGroup>
+      ))}
+    </MenuList>
+  );
 }

@@ -1,5 +1,6 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
+  Badge,
   Box,
   Button,
   Flex,
@@ -15,7 +16,6 @@ import { useState } from "react";
 import { Node, Panel, useOnSelectionChange } from "reactflow";
 import { CredTypeToImg, TThirdPartyAppTypes } from "../../utils/credTypeToImg";
 import type { TCredentialType, TNode, TWorkflow } from "../../../src/db/schema";
-import UltraForm, { TUltraFormFeildType } from "../common/UltraForm";
 
 const CredTypeToHelperText: Record<TCredentialType, string> = {
   "discord:send-message":
@@ -45,6 +45,7 @@ export default function SelectedNodePanel() {
 
   if (selectedNode) {
     const appName = selectedNode.type?.split(":")[0] as TThirdPartyAppTypes;
+    const isTrigger = "triggerType" in selectedNode.data;
 
     return (
       <Panel position="top-right">
@@ -70,6 +71,7 @@ export default function SelectedNodePanel() {
               {selectedNode.type?.split(/:|-/).join(" ")}
             </Heading>
 
+            {isTrigger && <Badge>Trigger</Badge>}
             <Button onClick={close}>
               <CloseIcon />
             </Button>
@@ -83,35 +85,6 @@ export default function SelectedNodePanel() {
                 {CredTypeToHelperText[selectedNode.type!]}
               </FormHelperText>
             </FormControl>
-
-            <UltraForm
-              data={[
-                TUltraFormFeildType.Number,
-                TUltraFormFeildType.String,
-                TUltraFormFeildType.Multiline,
-                TUltraFormFeildType.Boolean,
-                TUltraFormFeildType.Select,
-              ]
-                .map((type) => [
-                  {
-                    type,
-                    label: "Single " + type,
-                    helperText: "Hello this is helper text",
-                    required: true,
-                    isMultiple: false,
-                    selectOptions: ["abcd", "New York", "Dombivli"],
-                  },
-                  {
-                    type,
-                    label: "Multiple " + type,
-                    helperText: "Hello this is helper text",
-                    required: true,
-                    isMultiple: true,
-                    selectOptions: ["abcd", "New York", "Dombivli"],
-                  },
-                ])
-                .flat()}
-            />
           </Box>
 
           <HStack justifyContent="flex-end">
