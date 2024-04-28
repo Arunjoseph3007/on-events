@@ -3,7 +3,7 @@ import { Button, Image, type ButtonProps } from "@chakra-ui/react";
 import {
   CredTypeToImg,
   type TThirdPartyAppTypes,
-} from "../../utils/credTypeToImg";
+} from "../../utils/credType";
 
 export default function ThirdPartyAppChip({
   type,

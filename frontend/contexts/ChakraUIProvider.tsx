@@ -12,7 +12,7 @@ const GlobalStyles = {
       width: "10px",
     },
     "::-webkit-scrollbar-track": {
-      background: mode("#f1f1f1cc",'#55555555')(props),
+      background: mode("#f1f1f1cc", "#55555555")(props),
       borderRadius: "100px",
     },
     "::-webkit-scrollbar-thumb": {

@@ -17,6 +17,7 @@ import EditWorkflowPage from "./pages/dashboard/[workflowId]/edit";
 import RootLayout from "./layouts/RootLayout";
 import TopNavLayout from "./layouts/TopNavLayout";
 import SideNavLayout from "./layouts/SideNavLayout";
+import DiagramProvider from "./contexts/DiagramEditorContext";
 
 export default function Router() {
   return (
@@ -31,14 +32,16 @@ export default function Router() {
               <Route path="/executions" element={<ExecutionsPage />} />
               <Route path="/credentials" element={<CredentialsPage />} />
               <Route path="/add" element={<AddPage />} />
-              <Route
-                path="/workflows/:workflowId"
-                element={<SingleWorkflowPage />}
-              />
-              <Route
-                path="/workflows/:workflowId/edit"
-                element={<EditWorkflowPage />}
-              />
+              <Route element={<DiagramProvider />}>
+                <Route
+                  path="/workflows/:workflowId"
+                  element={<SingleWorkflowPage />}
+                />
+                <Route
+                  path="/workflows/:workflowId/edit"
+                  element={<EditWorkflowPage />}
+                />
+              </Route>
             </Route>
           </Route>
         </Route>

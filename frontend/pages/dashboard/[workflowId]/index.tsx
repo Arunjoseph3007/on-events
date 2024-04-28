@@ -5,6 +5,7 @@ import ReactFlow, {
   Background,
   BackgroundVariant,
   Controls,
+  NodeProps,
   Panel,
   useEdgesState,
   useNodesState,
@@ -22,10 +23,11 @@ import type {
 import { EditIcon } from "@chakra-ui/icons";
 import WorkflowNodeController from "../../../components/dashboard/WorkflowNodeController";
 import SelectedNodePanel from "../../../components/dashboard/SelectedNodePanel";
+import { TNodeData } from "../../../types/nodedata";
 
 const nodeTypes: Record<
   TCredentialType,
-  ComponentType<{ type: TCredentialType }>
+  ComponentType<NodeProps<TNodeData>>
 > = {
   "discord:send-message": WorkflowNodeController,
   "gcalender:event-created": WorkflowNodeController,
@@ -44,7 +46,7 @@ export default function SingleWorkflowPage() {
       enabled: !!params.workflowId,
     }
   );
-  const [nodes, setNodes, onNodesChange] = useNodesState<TCredential>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
@@ -55,14 +57,15 @@ export default function SingleWorkflowPage() {
     let y = 100,
       x = 400;
     const { nodes, ...triggerData } = workflowQuery.data;
-    const allWorkflowNodes: Node[] = [
+    const allWorkflowNodes: Node<TNodeData>[] = [
       {
         id: "trigger",
         position: { x, y },
         type: workflowQuery.data.triggerType,
         data: {
           type: workflowQuery.data.triggerType,
-          ...triggerData,
+          data: triggerData,
+          isLast: false,
         },
       },
     ];
@@ -76,7 +79,8 @@ export default function SingleWorkflowPage() {
         type: n.eventType,
         data: {
           type: n.eventType,
-          ...n,
+          data: n,
+          isLast: false,
         },
       });
 
@@ -87,6 +91,8 @@ export default function SingleWorkflowPage() {
         target: n.internalId.toString(),
       });
     }
+
+    allWorkflowNodes.at(-1)!.data.isLast = true;
 
     setNodes(allWorkflowNodes);
     setEdges(allEdges);
