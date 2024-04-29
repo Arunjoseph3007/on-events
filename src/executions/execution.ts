@@ -1,6 +1,12 @@
 import { eq } from "drizzle-orm";
 import db from "../db";
-import { TCredential, TEventType, TNode, workflows } from "../db/schema";
+import {
+  TCredential,
+  TEventType,
+  TNode,
+  executions,
+  workflows,
+} from "../db/schema";
 import { DiscordActions } from "../actions/discord";
 import { GSheetActions } from "../actions/gsheets";
 import { GmailActions } from "../actions/gmail";
@@ -18,9 +24,11 @@ const EventTypeToAction: Record<TEventType, TAction> = {
 export default class WorkflowExecution {
   private readonly workflowId: number;
   private readonly executionData: any;
+  private executionId: number;
 
   constructor(workflowId: number, payload: any) {
     this.workflowId = workflowId;
+    this.executionId = -1;
     this.executionData = {
       trigger: payload,
     };
@@ -47,6 +55,15 @@ export default class WorkflowExecution {
       throw new Error("Workflow not found");
     }
 
+    const thisExecution = await db
+      .insert(executions)
+      .values({
+        status: "running",
+        workflowId: this.workflowId,
+      })
+      .returning();
+    this.executionId = thisExecution[0].id;
+
     let currentlyExecutingNode = thisWorkflow.nodes.find(
       (n) => !n.parentNodeId
     );
@@ -62,6 +79,15 @@ export default class WorkflowExecution {
         (n) => n.parentNodeId == currentlyExecutingNode!.internalId
       );
     }
+
+    await db
+      .update(executions)
+      .set({
+        status: "success",
+        message: "Successfully completed",
+        finishedAt: new Date(),
+      })
+      .where(eq(executions.id, this.executionId));
 
     return true;
   }
@@ -80,6 +106,14 @@ export default class WorkflowExecution {
 
       return true;
     } catch (error) {
+      await db
+        .update(executions)
+        .set({
+          status: "failure",
+          message: (error as Error).message,
+          finishedAt: new Date(),
+        })
+        .where(eq(executions.id, this.executionId));
       return false;
     }
   }

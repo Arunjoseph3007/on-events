@@ -3,7 +3,7 @@ import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
 import { TEventType, nodes, workflows } from "../db/schema";
 import { eq } from "drizzle-orm";
-import WorkflowExecution from "./execution";
+import WorkflowExecution from "../executions/execution";
 import { TriggerTypeToController } from "../triggers";
 
 const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {

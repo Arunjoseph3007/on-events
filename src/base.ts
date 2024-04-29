@@ -10,6 +10,7 @@ import { CredentialsRouter } from "./credentials/routes";
 import { AccountsRouter } from "./accounts/routes";
 import { setupPagination } from "./utils/pagination";
 import { rateLimiter } from "./middlewares/ratelimit";
+import { ExecutionsRouter } from "./executions/routes";
 
 const app = express();
 
@@ -31,6 +32,7 @@ router.get("/", (_, res) => res.json({ hello: "world" }));
 router.use(AccountsRouter.path, AccountsRouter.router);
 router.use(WorflowsRouter.path, WorflowsRouter.router);
 router.use(CredentialsRouter.path, CredentialsRouter.router);
+router.use(ExecutionsRouter.path, ExecutionsRouter.router);
 
 app.use("/api", router);
 

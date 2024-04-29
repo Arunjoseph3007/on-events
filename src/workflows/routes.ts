@@ -10,13 +10,17 @@ import { desc } from "drizzle-orm";
 
 const router = Router();
 
-router.post("/:workflowId/trigger", async (req, res) => {
-  const result = await WorkflowsController.triggerWorkflow(
-    +req.params.workflowId,
-    req.body
-  );
+router.post("/:workflowId/trigger", async (req, res, next) => {
+  try {
+    const result = await WorkflowsController.triggerWorkflow(
+      +req.params.workflowId,
+      req.body
+    );
 
-  res.json(result);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.use(authenticateUser);

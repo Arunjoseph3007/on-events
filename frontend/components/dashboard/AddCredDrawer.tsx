@@ -12,6 +12,7 @@ import {
   FormHelperText,
   FormLabel,
   HStack,
+  Input,
   Menu,
   MenuButton,
   MenuItem,
@@ -105,6 +106,16 @@ export default function AddCredDrawer() {
           <DrawerHeader>Add new Credential</DrawerHeader>
           <DrawerBody>
             <FormControl isRequired>
+              <FormLabel>Display Name</FormLabel>
+              <Input type="text" placeholder="eg. My Business Credential" />
+              <FormHelperText>
+                Please enter a name to help you identify this Credential
+              </FormHelperText>
+            </FormControl>
+
+            <Divider py={2} />
+
+            <FormControl isRequired>
               <FormLabel>Credential Type</FormLabel>
               <Menu colorScheme="gray">
                 <MenuButton
@@ -160,7 +171,6 @@ export default function AddCredDrawer() {
             <Button variant="outline" mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button>Add</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

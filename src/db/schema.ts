@@ -25,6 +25,13 @@ export const credentialTypeEnum = pgEnum(
   CredentialTypeValues
 );
 
+export const executionStatusTypeEnum = pgEnum("executionStatusTypeEnum", [
+  "running",
+  "paused",
+  "success",
+  "failure",
+]);
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   fullName: text("full_name").notNull(),
@@ -65,6 +72,7 @@ export const workflowRelations = relations(workflows, ({ one, many }) => ({
     references: [users.id],
   }),
   nodes: many(nodes),
+  executions: many(executions),
 }));
 
 export const nodes = pgTable("nodes", {
@@ -93,6 +101,21 @@ export const nodeParentRelation = relations(nodes, ({ one }) => ({
     fields: [nodes.credentialId],
     references: [credentials.id],
   }),
+}));
+
+export const executions = pgTable("executions", {
+  id: serial("id").primaryKey(),
+  workflowId: integer("workflow_id")
+    .notNull()
+    .references(() => workflows.id),
+  status: executionStatusTypeEnum("status").notNull(),
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  finishedAt: timestamp("finished_at"),
+  message: text("message"),
+});
+
+export const executionRelation = relations(executions, ({ one }) => ({
+  workflow: one(workflows),
 }));
 
 export const credentials = pgTable("credentials", {
