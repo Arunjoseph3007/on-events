@@ -144,6 +144,9 @@ export type TWorkflow = InferSelectModel<typeof workflows>;
 export type TUser = InferSelectModel<typeof users>;
 export type TNode = InferSelectModel<typeof nodes>;
 export type TCredential = InferSelectModel<typeof credentials>;
+export type TExecution = InferSelectModel<typeof executions>;
 export type TEventType = (typeof eventTypeEnum.enumValues)[number];
 export type TTriggerType = (typeof triggerTypeEnum.enumValues)[number];
 export type TCredentialType = (typeof credentialTypeEnum.enumValues)[number];
+export type TExecutionStatusType =
+  (typeof executionStatusTypeEnum.enumValues)[number];
