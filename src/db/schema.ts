@@ -96,6 +96,7 @@ export const nodeParentRelation = relations(nodes, ({ one }) => ({
 }));
 
 export const credentials = pgTable("credentials", {
+  displayName: varchar("display_name", { length: 256 }),
   id: serial("id").primaryKey(),
   clientId: varchar("client_id", { length: 256 }),
   accessToken: text("access_token").notNull(),

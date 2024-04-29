@@ -14,19 +14,32 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { useEditor } from "../../contexts/DiagramEditorContext";
 import { Panel } from "reactflow";
 import { ChevronDownIcon, CloseIcon } from "@chakra-ui/icons";
-import { EventTypeValues, TriggerTypeValues } from "../../../common/schema";
+import { EventTypeValues } from "../../../common/schema";
 import ThirdPartyAppChip from "./ThirdPartyAppChipp";
 import { useState } from "react";
-import type { TEventType } from "../../../src/db/schema";
+import type { TCredential, TEventType } from "../../../src/db/schema";
 import { CredTypeToHelperText } from "../../utils/credType";
+import { useFetch } from "../../libs/reactQuery";
+import type { TPaginationResponse } from "../../../src/utils/pagination";
 
 export default function NewNodePanel() {
   const [actionType, setActionType] = useState<TEventType>();
+  const [credId, setCredId] = useState<number>();
   const { isAdding, setIsAdding } = useEditor();
+
+  const credsSearchQuery = useFetch<TPaginationResponse<TCredential[]>>(
+    "/credentials/type/" + actionType,
+    {
+      queryKey: ["credentials", actionType],
+      enabled: !!actionType,
+    }
+  );
 
   if (!isAdding) return null;
 
@@ -54,7 +67,7 @@ export default function NewNodePanel() {
             New Empty Node
           </Heading>
 
-          <Button onClick={close}>
+          <Button onClick={() => setIsAdding(false)}>
             <CloseIcon />
           </Button>
         </HStack>
@@ -64,7 +77,7 @@ export default function NewNodePanel() {
             <FormLabel>Trigger Type</FormLabel>
             <Menu colorScheme="gray">
               <MenuButton w="100%" as={Button} rightIcon={<ChevronDownIcon />}>
-                Credential Type
+                Action Type
               </MenuButton>
               <MenuList>
                 {EventTypeValues.map((type) => (
@@ -101,6 +114,35 @@ export default function NewNodePanel() {
                   {CredTypeToHelperText[actionType]}
                 </FormHelperText>
               </FormControl>
+
+              {credsSearchQuery.isLoading && <Spinner />}
+
+              {credsSearchQuery.isSuccess &&
+                credsSearchQuery.data.data.length > 0 && (
+                  <FormControl isRequired>
+                    <FormLabel>Select Credential</FormLabel>
+                    <Menu colorScheme="gray">
+                      <MenuButton
+                        w="100%"
+                        as={Button}
+                        rightIcon={<ChevronDownIcon />}
+                      >
+                        Select Credential
+                      </MenuButton>
+                      <MenuList>
+                        {credsSearchQuery.data.data.map((cred) => (
+                          <MenuItem
+                            onClick={() => setCredId(cred.id)}
+                            key={cred.id}
+                            w="420px"
+                          >
+                            <Text isTruncated>{cred.accessToken}</Text>
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </Menu>
+                  </FormControl>
+                )}
             </>
           )}
         </Box>

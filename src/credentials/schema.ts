@@ -6,6 +6,7 @@ export const insertCredentialsSchema = z.object({
   accessToken: z.string(),
   expiry: z.date().optional(),
   credentialType: z.enum(credentialTypeEnum.enumValues),
+  displayName: z.string().optional(),
 });
 
 export const credTypeSchema = z.enum(credentialTypeEnum.enumValues);

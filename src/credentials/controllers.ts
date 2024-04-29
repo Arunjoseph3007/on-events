@@ -1,8 +1,8 @@
 import type * as z from "zod";
 import { insertCredentialsSchema } from "./schema";
 import db from "../db";
-import { TCredentialType, credentials } from "../db/schema";
-import { and, eq } from "drizzle-orm";
+import { credentials } from "../db/schema";
+import { eq } from "drizzle-orm";
 import { googleGrantRefreshToken, isGoogleCred } from "./utils";
 
 async function create(
@@ -24,6 +24,7 @@ async function create(
 async function getCredentialsById(id: number) {
   const cred = await db.query.credentials.findFirst({
     where: eq(credentials.id, id),
+    columns: { accessToken: false },
   });
 
   return cred;
