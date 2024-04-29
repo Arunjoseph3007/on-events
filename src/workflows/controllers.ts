@@ -7,8 +7,12 @@ import WorkflowExecution from "./execution";
 import { TriggerTypeToController } from "../triggers";
 
 const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {
-  "discord:send-message": z.string(),
-  "gsheet:append-row": z.array(z.string()),
+  "discord:send-message": z.object({
+    message: z.string(),
+  }),
+  "gsheet:append-row": z.object({
+    rows: z.array(z.string()),
+  }),
   "gmail:send-mail": z.object({
     to: z.string().email(),
     from: z.string().email(),

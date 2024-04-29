@@ -27,19 +27,23 @@ import type { TCredential, TEventType } from "../../../src/db/schema";
 import { CredTypeToHelperText } from "../../utils/credType";
 import { useFetch } from "../../libs/reactQuery";
 import type { TPaginationResponse } from "../../../src/utils/pagination";
+import { CredentialsIcon } from "../../icons/credentials";
+import UltraForm from "../common/UltraForm";
+import { UltraFormConfigOf } from "../../../common/ultraFormConfigs";
+import useSuggestions from "../../hooks/useSuggestions";
 
 export default function NewNodePanel() {
   const [actionType, setActionType] = useState<TEventType>();
-  const [credId, setCredId] = useState<number>();
+  const [credId, setCredId] = useState<Omit<TCredential, "accessToken">>();
   const { isAdding, setIsAdding } = useEditor();
+  const suggestions = useSuggestions();
 
-  const credsSearchQuery = useFetch<TPaginationResponse<TCredential[]>>(
-    "/credentials/type/" + actionType,
-    {
-      queryKey: ["credentials", actionType],
-      enabled: !!actionType,
-    }
-  );
+  const credsSearchQuery = useFetch<
+    TPaginationResponse<Omit<TCredential, "accessToken">[]>
+  >("/credentials/type/" + actionType, {
+    queryKey: ["credentials", actionType],
+    enabled: !!actionType,
+  });
 
   if (!isAdding) return null;
 
@@ -55,6 +59,7 @@ export default function NewNodePanel() {
         p={3}
         pr={1}
       >
+        {/* Header */}
         <HStack borderBottomWidth={2} pb={2} mb={2}>
           <Image
             boxSize="45px"
@@ -75,28 +80,35 @@ export default function NewNodePanel() {
         <Box pr={2} overflowY="auto" flex={1}>
           <FormControl isRequired>
             <FormLabel>Trigger Type</FormLabel>
-            <Menu colorScheme="gray">
-              <MenuButton w="100%" as={Button} rightIcon={<ChevronDownIcon />}>
-                Action Type
-              </MenuButton>
-              <MenuList>
-                {EventTypeValues.map((type) => (
-                  <MenuItem
-                    onClick={() => setActionType(type)}
-                    key={type}
-                    w="420px"
+            {!actionType && (
+              <>
+                <Menu colorScheme="gray">
+                  <MenuButton
+                    w="100%"
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
                   >
-                    <ThirdPartyAppChip type={type} />
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </Menu>
-            <FormHelperText>Please select a Action type</FormHelperText>
+                    Action Type
+                  </MenuButton>
+                  <MenuList>
+                    {EventTypeValues.map((type) => (
+                      <MenuItem
+                        onClick={() => setActionType(type)}
+                        key={type}
+                        w="420px"
+                      >
+                        <ThirdPartyAppChip type={type} />
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Menu>
+                <FormHelperText>Please select a Action type</FormHelperText>
+              </>
+            )}
           </FormControl>
 
           {actionType && (
             <>
-              <Divider my={4} />
               <HStack>
                 <ThirdPartyAppChip type={actionType} />
                 <Button
@@ -107,6 +119,8 @@ export default function NewNodePanel() {
                 </Button>
               </HStack>
 
+              <Divider py={2} />
+
               <FormControl isRequired>
                 <FormLabel>Resource ID</FormLabel>
                 <Input />
@@ -115,34 +129,62 @@ export default function NewNodePanel() {
                 </FormHelperText>
               </FormControl>
 
+              <Divider py={2} />
+
               {credsSearchQuery.isLoading && <Spinner />}
 
               {credsSearchQuery.isSuccess &&
                 credsSearchQuery.data.data.length > 0 && (
                   <FormControl isRequired>
                     <FormLabel>Select Credential</FormLabel>
-                    <Menu colorScheme="gray">
-                      <MenuButton
-                        w="100%"
-                        as={Button}
-                        rightIcon={<ChevronDownIcon />}
-                      >
-                        Select Credential
-                      </MenuButton>
-                      <MenuList>
-                        {credsSearchQuery.data.data.map((cred) => (
-                          <MenuItem
-                            onClick={() => setCredId(cred.id)}
-                            key={cred.id}
-                            w="420px"
-                          >
-                            <Text isTruncated>{cred.accessToken}</Text>
-                          </MenuItem>
-                        ))}
-                      </MenuList>
-                    </Menu>
+
+                    {!credId && (
+                      <Menu colorScheme="gray">
+                        <MenuButton
+                          w="100%"
+                          as={Button}
+                          rightIcon={<ChevronDownIcon />}
+                        >
+                          Select Credential
+                        </MenuButton>
+                        <MenuList>
+                          {credsSearchQuery.data.data.map((cred) => (
+                            <MenuItem
+                              onClick={() => setCredId(cred)}
+                              key={cred.id}
+                              w="420px"
+                            >
+                              <Text isTruncated>{cred.displayName}</Text>
+                            </MenuItem>
+                          ))}
+                        </MenuList>
+                      </Menu>
+                    )}
                   </FormControl>
                 )}
+
+              {credId && (
+                <HStack>
+                  <Button
+                    w="100%"
+                    colorScheme="gray"
+                    leftIcon={<CredentialsIcon />}
+                  >
+                    {credId.displayName}
+                  </Button>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => setCredId(undefined)}
+                  >
+                    <CloseIcon />
+                  </Button>
+                </HStack>
+              )}
+
+              <UltraForm
+                data={UltraFormConfigOf[actionType]}
+                suggestions={suggestions}
+              />
             </>
           )}
         </Box>

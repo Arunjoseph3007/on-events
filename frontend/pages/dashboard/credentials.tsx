@@ -22,10 +22,9 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import AddCredDrawer from "../../components/dashboard/AddCredDrawer";
 
 export default function CredentialsPage() {
-  const credsQuery = useFetch<TPaginationResponse<TCredential[]>>(
-    "/credentials",
-    { queryKey: ["credentials"] }
-  );
+  const credsQuery = useFetch<
+    TPaginationResponse<Omit<TCredential, "accessToken">[]>
+  >("/credentials", { queryKey: ["credentials"] });
 
   return (
     <Box p={12}>
@@ -44,6 +43,7 @@ export default function CredentialsPage() {
             <Thead>
               <Tr>
                 <Th>Id</Th>
+                <Th>Display Name</Th>
                 <Th>Type</Th>
                 <Th>Client Id</Th>
                 <Th>Expiry</Th>
@@ -57,6 +57,9 @@ export default function CredentialsPage() {
                     <Text fontSize="xs" fontWeight={900} color={"GrayText"}>
                       {idx + 1}.
                     </Text>
+                  </Td>
+                  <Td>
+                    <Text fontWeight={600}>{cred.displayName}</Text>
                   </Td>
                   <Td>
                     <ThirdPartyAppChip type={cred.credentialType} />

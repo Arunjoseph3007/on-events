@@ -45,7 +45,7 @@ type TPotentialData =
   | [number, string][]
   | [boolean, string][];
 
-type TUltraFormFeild = {
+export type TUltraFormFeild = {
   label: string;
   required?: boolean;
   readonly?: boolean;
@@ -57,13 +57,13 @@ type TUltraFormFeild = {
   placeholder?: string;
 };
 
-type TSuggestion = {
+export type TSuggestion = {
   key: string;
   label?: string;
   description?: string;
 };
 
-type TTextSuggestions = { groupName: string; data: TSuggestion[] }[];
+export type TTextSuggestions = { groupName: string; data: TSuggestion[] }[];
 
 type TUtraFormProps = {
   title?: string;
@@ -225,9 +225,9 @@ function UltraFormFeild({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
-  const onSuggestionSelect = (suggestion: TSuggestion) => {
+  const onSuggestionSelect = (suggestion: TSuggestion, groupName: string) => {
     btnRef.current?.focus();
-    setValue(`${value}{{${suggestion.key}}}`);
+    setValue(`${value}{{${groupName}__${suggestion.key}}}`);
     onClose();
   };
 
@@ -321,7 +321,7 @@ function SuggestionMenu({
   suggestions,
 }: {
   suggestions?: TTextSuggestions;
-  onSuggestionSelect: (p: TSuggestion) => void;
+  onSuggestionSelect: (p: TSuggestion, g: string) => void;
 }) {
   if (!suggestions || !onSuggestionSelect) return null;
 
@@ -339,7 +339,9 @@ function SuggestionMenu({
                 display="flex"
                 flexDirection="column"
                 alignItems="flex-start"
-                onClick={() => onSuggestionSelect(sugg)}
+                onClick={() =>
+                  onSuggestionSelect(sugg, suggestionGroup.groupName)
+                }
               >
                 <Text fontWeight={600} fontSize="xl" textTransform="capitalize">
                   {sugg.label || sugg.key.replace("__", " ")}
