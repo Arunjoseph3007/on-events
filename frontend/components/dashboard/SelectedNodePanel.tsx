@@ -19,10 +19,14 @@ import {
   TThirdPartyAppTypes,
 } from "../../utils/credType";
 import { useEditor } from "../../contexts/DiagramEditorContext";
+import UltraForm from "../common/UltraForm";
+import { getUltraConfigsOf } from "../../../common/ultraFormConfigs";
+import useSuggestions from "../../hooks/useSuggestions";
 
 export default function SelectedNodePanel() {
-  const { selectedNode, setSelectedNode } = useEditor();
+  const { selectedNode, setSelectedNode, isEditPage } = useEditor();
   const close = () => setSelectedNode(null);
+  const suggestions = useSuggestions();
 
   if (!selectedNode) {
     return null;
@@ -37,7 +41,7 @@ export default function SelectedNodePanel() {
         direction="column"
         bg="Background"
         boxShadow="lg"
-        w="450px"
+        w="35vw"
         h="85vh"
         borderRadius={10}
         p={3}
@@ -69,6 +73,18 @@ export default function SelectedNodePanel() {
               {CredTypeToHelperText[selectedNode.type!]}
             </FormHelperText>
           </FormControl>
+
+          <UltraForm
+            suggestions={suggestions}
+            data={
+              !isTrigger
+                ? getUltraConfigsOf(selectedNode.data.eventType, {
+                    readonly: !isEditPage,
+                    initialValues: selectedNode.data.config,
+                  })
+                : []
+            }
+          />
         </Box>
 
         <HStack justifyContent="flex-end">

@@ -216,6 +216,7 @@ function UltraFormFeild({
   setValue,
   value,
   suggestions,
+  readonly,
 }: TUltraFormFeild & {
   value: any;
   setValue: (p: any) => void;
@@ -248,10 +249,12 @@ function UltraFormFeild({
             placeholder={placeholder}
           />
           <MenuButton as="div" w="100%" />
-          <SuggestionMenu
-            onSuggestionSelect={onSuggestionSelect}
-            suggestions={suggestions}
-          />
+          {!readonly && (
+            <SuggestionMenu
+              onSuggestionSelect={onSuggestionSelect}
+              suggestions={suggestions}
+            />
+          )}
         </Menu>
       );
     }
@@ -283,10 +286,12 @@ function UltraFormFeild({
             value={value}
           />
           <MenuButton as="div" w="100%" />
-          <SuggestionMenu
-            onSuggestionSelect={onSuggestionSelect}
-            suggestions={suggestions}
-          />
+          {!readonly && (
+            <SuggestionMenu
+              onSuggestionSelect={onSuggestionSelect}
+              suggestions={suggestions}
+            />
+          )}
         </Menu>
       );
     }

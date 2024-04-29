@@ -66,3 +66,22 @@ export const UltraFormConfigOf: Record<TEventType, TUltraFormFeild[]> = {
     },
   ],
 };
+
+export function getUltraConfigsOf(
+  type: TEventType,
+  { readonly = false, initialValues = {} as any }
+) {
+  let config = UltraFormConfigOf[type];
+
+  if (readonly) {
+    config = config.map((el) => ({ ...el, readonly: true }));
+  }
+
+  for (const feild of config) {
+    if (feild.label in initialValues) {
+      feild.initialValue = initialValues[feild.label];
+    }
+  }
+
+  return config;
+}

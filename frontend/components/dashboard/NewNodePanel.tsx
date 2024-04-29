@@ -53,7 +53,7 @@ export default function NewNodePanel() {
         direction="column"
         bg="Background"
         boxShadow="lg"
-        w="450px"
+        w="35vw"
         h="85vh"
         borderRadius={10}
         p={3}
