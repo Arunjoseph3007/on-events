@@ -14,7 +14,7 @@ const PORT = 3000;
 
 app.use("*", async (_, res, next) => {
   try {
-    console.log(fs.readdirSync(path.resolve(__dirname, "client")));
+    console.log(fs.readdirSync(path.resolve(__dirname, "..", "dist/client")));
     // const template = fs.readFileSync(
     //   path.resolve(__dirname, "client/index.html"),
     //   "utf-8"
