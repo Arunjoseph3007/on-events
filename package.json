@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "lint": "tsc --noEmit",
     "start": "tsc && node src/index.js",
