@@ -14,6 +14,7 @@ app.use(
 
 app.use("*", async (_, res) => {
   try {
+    console.log(fs.readdirSync(path.resolve(__dirname, "client")));
     const template = fs.readFileSync(
       path.resolve(__dirname, "client/index.html"),
       "utf-8"
