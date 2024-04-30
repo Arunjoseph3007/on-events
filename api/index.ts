@@ -6,13 +6,13 @@ import path from "path";
 
 const PORT = 3000;
 
-app.use(
-  express.static(path.resolve(__dirname, "client"), {
-    index: false,
-  })
-);
+// app.use(
+//   express.static(path.resolve(__dirname, "client"), {
+//     index: false,
+//   })
+// );
 
-app.use("*", async (_, res) => {
+app.use("*", async (_, res, next) => {
   try {
     console.log(fs.readdirSync(path.resolve(__dirname, "client")));
     // const template = fs.readFileSync(
@@ -25,9 +25,9 @@ app.use("*", async (_, res) => {
     // // @ts-ignore
     // const html = template.replace(`<!--ssr-outlet-->`, render);
     // res.status(200).set({ "Content-Type": "text/html" }).end(html);
-    res.send('hello')
+    res.send("hello");
   } catch (error) {
-    res.status(500).end(error);
+    next(error);
   }
 });
 
