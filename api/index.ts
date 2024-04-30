@@ -15,16 +15,17 @@ app.use(
 app.use("*", async (_, res) => {
   try {
     console.log(fs.readdirSync(path.resolve(__dirname, "client")));
-    const template = fs.readFileSync(
-      path.resolve(__dirname, "client/index.html"),
-      "utf-8"
-    );
+    // const template = fs.readFileSync(
+    //   path.resolve(__dirname, "client/index.html"),
+    //   "utf-8"
+    // );
 
-    // @ts-ignore
-    const { render } = await import("../dist/server/server.mjs");
-    // @ts-ignore
-    const html = template.replace(`<!--ssr-outlet-->`, render);
-    res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    // // @ts-ignore
+    // const { render } = await import("../dist/server/server.mjs");
+    // // @ts-ignore
+    // const html = template.replace(`<!--ssr-outlet-->`, render);
+    // res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    res.send('hello')
   } catch (error) {
     res.status(500).end(error);
   }
