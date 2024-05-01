@@ -4,3 +4,4 @@
 /migrations
 thunder.json
 .vercel
+node_modules

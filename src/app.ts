@@ -11,6 +11,8 @@ import { AccountsRouter } from "./accounts/routes";
 import { setupPagination } from "./utils/pagination";
 import { rateLimiter } from "./middlewares/ratelimit";
 import { ExecutionsRouter } from "./executions/routes";
+import errorHandlingMiddleware from "./middlewares/errorHandling";
+import { frontendMiddelware } from "./middlewares/frontend";
 
 const app = express();
 
@@ -22,6 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static("./public"));
+app.use(express.static("./frontend/dist"));
 app.use(playMiddleware);
 
 const router = express.Router();
@@ -35,5 +38,7 @@ router.use(CredentialsRouter.path, CredentialsRouter.router);
 router.use(ExecutionsRouter.path, ExecutionsRouter.router);
 
 app.use("/api", router);
+app.use("*", frontendMiddelware);
+app.use(errorHandlingMiddleware);
 
 export default app;
