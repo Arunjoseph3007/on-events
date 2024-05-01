@@ -3,8 +3,6 @@ import express from "express";
 import fs from "fs";
 import errorHandlingMiddleware from "../src/middlewares/errorHandling";
 import path from "path";
-// @ts-ignore
-import { render } from "../dist/server/server.mjs";
 
 const PORT = 3000;
 
@@ -21,6 +19,8 @@ app.use("*", async (_, res, next) => {
       "utf-8"
     );
 
+    // @ts-ignore
+    const { render } = await import("../dist/server/server.mjs");
     // @ts-ignore
     const html = template.replace(`<!--ssr-outlet-->`, render);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
