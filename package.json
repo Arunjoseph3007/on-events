@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "lint": "tsc --noEmit",
     "start": "tsc && node src/index.js",
@@ -13,7 +12,7 @@
     "watch": "esbuild src/index.ts --platform=node --outfile=dist/watch.js --bundle --watch",
     "dev:frontend": "esbuild src/dev.ts --platform=node --outfile=dist/frontend.js --bundle --external:vite && node dist/frontend.js",
     "dev": "nodemon",
-    "vercel-build": "yarn build:client && yarn build:server",
+    "vercel-build": "yarn build:client && yarn build:server &&  mv dist/server/server.mjs dist/server/server.js",
     "db:generate": "drizzle-kit generate:pg",
     "db:migrate": "ts-node src/db/migrate.ts"
   },

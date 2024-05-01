@@ -12,7 +12,7 @@ app.use(
   })
 );
 
-app.use("*", async (_, res, next) => {
+app.use("*", async (req, res, next) => {
   try {
     const template = fs.readFileSync(
       path.resolve(__dirname, "client/index.html"),
@@ -20,9 +20,10 @@ app.use("*", async (_, res, next) => {
     );
 
     // @ts-ignore
-    const { render } = await import("../dist/server/server.js");
+    const { render } = await import("../dist/server/server.mjs");
+    const rendered = await render({ path: req.originalUrl });
 
-    const html = template.replace(`<!--ssr-outlet-->`, render);
+    const html = template.replace(`<!--ssr-outlet-->`, rendered);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
   } catch (error) {
     next(error);

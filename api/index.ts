@@ -20,7 +20,7 @@ app.use("*", async (_, res, next) => {
     );
 
     // @ts-ignore
-    const { render } = await import("../dist/server/server.js");
+    const { render } = await import("../dist/server/server.mjs");
     // @ts-ignore
     const html = template.replace(`<!--ssr-outlet-->`, render);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
