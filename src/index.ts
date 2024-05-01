@@ -12,7 +12,7 @@ app.use(
   })
 );
 
-app.use("*", async (_, res) => {
+app.use("*", async (_, res, next) => {
   try {
     const template = fs.readFileSync(
       path.resolve(__dirname, "client/index.html"),
@@ -25,7 +25,7 @@ app.use("*", async (_, res) => {
     const html = template.replace(`<!--ssr-outlet-->`, render);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
   } catch (error) {
-    res.status(500).end(error);
+    next(error);
   }
 });
 

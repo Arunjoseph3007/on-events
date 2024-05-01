@@ -13,6 +13,7 @@ import CredentialsPage from "./pages/dashboard/credentials";
 import AddPage from "./pages/dashboard/add";
 import SingleWorkflowPage from "./pages/dashboard/[workflowId]";
 import EditWorkflowPage from "./pages/dashboard/[workflowId]/edit";
+import OAuthPage from "./pages/oauth";
 // Layouts
 import RootLayout from "./layouts/RootLayout";
 import TopNavLayout from "./layouts/TopNavLayout";
@@ -32,15 +33,13 @@ export default function Router() {
               <Route path="/executions" element={<ExecutionsPage />} />
               <Route path="/credentials" element={<CredentialsPage />} />
               <Route path="/add" element={<AddPage />} />
-              <Route element={<DiagramProvider />}>
-                <Route
-                  path="/workflows/:workflowId"
-                  element={<SingleWorkflowPage />}
-                />
-                <Route
-                  path="/workflows/:workflowId/edit"
-                  element={<EditWorkflowPage />}
-                />
+              <Route path="/oauth" element={<OAuthPage />} />
+              <Route
+                path="/workflows/:workflowId"
+                element={<DiagramProvider />}
+              >
+                <Route index element={<SingleWorkflowPage />} />
+                <Route path="edit" element={<EditWorkflowPage />} />
               </Route>
             </Route>
           </Route>

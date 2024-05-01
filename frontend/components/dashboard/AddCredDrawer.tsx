@@ -27,27 +27,82 @@ import { useRef, useState } from "react";
 import { CredentialTypeValues } from "../../../common/schema";
 import { useQueryClient } from "@tanstack/react-query";
 
-const OAuthActions: Record<TCredentialType, () => Promise<boolean>> = {
-  "discord:send-message": async () => {
-    window.location.replace(
-      "https://discord.com/oauth2/authorize?client_id=1223498118847402024&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000&scope=identify"
-    );
+const getGooglRedirectUrl = (
+  type: TCredentialType,
+  displayName: string,
+  scope: string
+) => {
+  const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  url.searchParams.set("redirect_uri", "https://on-events.vercel.app");
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("scope", scope);
+  url.searchParams.set("include_granted_scopes", "true");
+  url.searchParams.set("state", type + "__" + displayName);
+  url.searchParams.set("access_type", "offline");
+  url.searchParams.set("prompt", "consent");
+  url.searchParams.set(
+    "client_id",
+    "1014548543088-6gqr06fcf649jma2afhrao2obfkgqgq2.apps.googleusercontent.com"
+  );
 
-    return true;
-  },
-  "gcalender:event-created": async () => true,
-  "github:commit-received": async () => true,
-  "gmail:mail-received": async () => true,
-  "gmail:send-mail": async () => true,
-  "gsheet:append-row": async () => true,
+  return url;
 };
 
 export default function AddCredDrawer() {
   const qClient = useQueryClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [credType, setCredType] = useState<TCredentialType>();
+  const [displayName, setDislplayname] = useState("");
   const btnRef = useRef<HTMLButtonElement>(null);
   const toast = useToast();
+
+  const OAuthActions: Record<TCredentialType, () => Promise<boolean>> = {
+    "discord:send-message": async () => {
+      // TODO
+      window.location.replace(
+        "https://discord.com/oauth2/authorize?client_id=1223498118847402024&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000&scope=identify"
+      );
+
+      return true;
+    },
+    "gcalender:event-created": async () => {
+      const url = getGooglRedirectUrl(
+        "gcalender:event-created",
+        displayName,
+        "https://www.googleapis.com/auth/calendar.events.readonly"
+      );
+      window.location.replace(url);
+      return true;
+    },
+    "gmail:send-mail": async () => {
+      const url = getGooglRedirectUrl(
+        "gmail:send-mail",
+        displayName,
+        "https://www.googleapis.com/auth/gmail.send"
+      );
+      window.location.replace(url);
+      return true;
+    },
+    "gsheet:append-row": async () => {
+      const url = getGooglRedirectUrl(
+        "gsheet:append-row",
+        displayName,
+        "https://www.googleapis.com/auth/spreadsheets"
+      );
+      window.location.replace(url);
+      return true;
+    },
+    "gmail:mail-received": async () => {
+      const url = getGooglRedirectUrl(
+        "gmail:mail-received",
+        displayName,
+        "TODO"
+      );
+      window.location.replace(url);
+      return true;
+    },
+    "github:commit-received": async () => true,
+  };
 
   const handleOAuthFlow = async () => {
     if (!credType) {
@@ -107,7 +162,12 @@ export default function AddCredDrawer() {
           <DrawerBody>
             <FormControl isRequired>
               <FormLabel>Display Name</FormLabel>
-              <Input type="text" placeholder="eg. My Business Credential" />
+              <Input
+                pattern="[0-9a-zA-Z]{1,32}"
+                onChange={(e) => setDislplayname(e.target.value)}
+                type="text"
+                placeholder="eg. My Business Credential"
+              />
               <FormHelperText>
                 Please enter a name to help you identify this Credential
               </FormHelperText>
@@ -156,6 +216,7 @@ export default function AddCredDrawer() {
                 </HStack>
 
                 <Button
+                  isDisabled={!displayName || !credType}
                   onClick={handleOAuthFlow}
                   mt={8}
                   w="100%"
