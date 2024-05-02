@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Flex,
+  Text,
   Tooltip,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -38,6 +39,7 @@ export default function SideNavLayout() {
           boxShadow="base"
           zIndex={999}
           onClick={() => setIsExpanded((p) => !p)}
+          transition="300ms all ease"
         >
           {isExpanded ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </Box>
@@ -53,8 +55,14 @@ export default function SideNavLayout() {
               leftIcon={<AddIcon w={6} />}
               w={btnWidth}
               justifyContent="flex-start"
+              overflow="hidden"
             >
-              {isExpanded && "Add Workflow"}
+              <Text
+                transition="300ms all ease"
+                opacity={isExpanded ? "1" : "0"}
+              >
+                Add Workflow
+              </Text>
             </Button>
           </Link>
         </Tooltip>
@@ -84,16 +92,20 @@ export default function SideNavLayout() {
                   variant="ghost"
                   leftIcon={<elem.icon boxSize={6} />}
                   colorScheme="gray"
-                  transition={"ease"}
-                  transitionDuration={"300ms"}
-                  transitionProperty={"all"}
+                  transition={"300ms all ease"}
+                  overflow="hidden"
                   bg={
                     isActive
                       ? useColorModeValue("green.50", "gray.900")
                       : undefined
                   }
                 >
-                  {isExpanded && elem.label}
+                  <Text
+                    transition="300ms all ease"
+                    opacity={isExpanded ? "1" : "0"}
+                  >
+                    {elem.label}
+                  </Text>
                 </Button>
               )}
             </NavLink>
