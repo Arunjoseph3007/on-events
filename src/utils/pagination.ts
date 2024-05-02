@@ -21,6 +21,7 @@ declare module "express-serve-static-core" {
      * @returns
      */
     paginate: <TData>(payload: TPaginationResult<TData>) => void;
+
     /**
      * ### IMPORTANT: USE WITH CAUTION
      * Takes in a query and coulmns to sort the result, executes the query and

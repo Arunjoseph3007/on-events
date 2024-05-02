@@ -13,6 +13,7 @@ import { rateLimiter } from "./middlewares/ratelimit";
 import { ExecutionsRouter } from "./executions/routes";
 import errorHandlingMiddleware from "./middlewares/errorHandling";
 import { frontendMiddelware } from "./middlewares/frontend";
+import notFoundMiddleWare from "./middlewares/notFound";
 
 const app = express();
 
@@ -36,9 +37,10 @@ router.use(AccountsRouter.path, AccountsRouter.router);
 router.use(WorflowsRouter.path, WorflowsRouter.router);
 router.use(CredentialsRouter.path, CredentialsRouter.router);
 router.use(ExecutionsRouter.path, ExecutionsRouter.router);
+router.use(notFoundMiddleWare);
 
 app.use("/api", router);
-app.use("*", frontendMiddelware);
+app.use(frontendMiddelware);
 app.use(errorHandlingMiddleware);
 
 export default app;

@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import UnAuthorizedError from "../error/unauthorized";
+import NotFoundError from "../error/notFound";
 
 export default function errorHandlingMiddleware(
   err: Error,
@@ -20,6 +21,14 @@ export default function errorHandlingMiddleware(
   if (err instanceof UnAuthorizedError) {
     res.status(401).json({
       error: err.error,
+      message: err.message,
+    });
+    return;
+  }
+
+  if (err instanceof NotFoundError) {
+    res.status(404).json({
+      error: err,
       message: err.message,
     });
     return;
