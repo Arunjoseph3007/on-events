@@ -5,13 +5,6 @@ export default function playMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  try {
-    // Play here
-
-    next();
-  } catch (error) {
-    console.log(error);
-
-    next(error);
-  }
+  // Play here
+  next();
 }

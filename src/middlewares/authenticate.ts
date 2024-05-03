@@ -17,19 +17,15 @@ export const authenticateUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader)
-      throw new UnAuthorizedError("Authorization token missing in request");
+  const authHeader = req.headers.authorization;
+  if (!authHeader)
+    throw new UnAuthorizedError("Authorization token missing in request");
 
-    const [bearer, token, ...extra] = authHeader.split(" ");
-    if (!token || bearer != "Bearer" || extra.length > 0)
-      throw new UnAuthorizedError("Authorization token missing in request");
+  const [bearer, token, ...extra] = authHeader.split(" ");
+  if (!token || bearer != "Bearer" || extra.length > 0)
+    throw new UnAuthorizedError("Authorization token missing in request");
 
-    req.user = await verifyToken(token);
+  req.user = await verifyToken(token);
 
-    next();
-  } catch (error) {
-    next(error);
-  }
+  next();
 };

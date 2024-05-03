@@ -8,69 +8,53 @@ import { authenticateUser } from "../middlewares/authenticate";
 
 const router = Router();
 
-router.get("/", authenticateUser, async (req, res, next) => {
-  try {
-    res.json(req.user);
-  } catch (error) {
-    next(error);
-  }
+router.get("/", authenticateUser, async (req, res) => {
+  res.json(req.user);
 });
 
-router.post("/register", validate(registerSchema), async (req, res, next) => {
-  try {
-    const { email, password, name } = req.body;
+router.post("/register", validate(registerSchema), async (req, res) => {
+  const { email, password, name } = req.body;
 
-    await registerUser(email, password, name);
+  await registerUser(email, password, name);
 
-    res.json({ message: "Successfully signed up" });
-  } catch (error) {
-    next(error);
-  }
+  res.json({ message: "Successfully signed up" });
 });
 
-router.post("/login", validate(loginSchema), async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+router.post("/login", validate(loginSchema), async (req, res) => {
+  const { email, password } = req.body;
 
-    const user = await verifyLogin(email, password);
-    const accessToken = await createAccessToken(
-      user.id,
-      user.email,
-      user.fullName
-    );
-    const refreshToken = await createRefreshToken(
-      user.id,
-      user.email,
-      user.fullName
-    );
+  const user = await verifyLogin(email, password);
+  const accessToken = await createAccessToken(
+    user.id,
+    user.email,
+    user.fullName
+  );
+  const refreshToken = await createRefreshToken(
+    user.id,
+    user.email,
+    user.fullName
+  );
 
-    const date = new Date();
-    date.setFullYear(date.getFullYear() + 1);
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      expires: date,
-      sameSite: "none",
-      secure: true,
-    });
+  const date = new Date();
+  date.setFullYear(date.getFullYear() + 1);
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    expires: date,
+    sameSite: "none",
+    secure: true,
+  });
 
-    res.json({ accessToken, user, refreshToken });
-  } catch (error) {
-    next(error);
-  }
+  res.json({ accessToken, user, refreshToken });
 });
 
-router.post("/refresh", async (req, res, next) => {
-  try {
-    const refreshToken = req.cookies.refreshToken;
+router.post("/refresh", async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
 
-    const user = await verifyToken(refreshToken);
-    const { id, email, fullName } = user;
-    const accessToken = await createAccessToken(id, email, fullName);
+  const user = await verifyToken(refreshToken);
+  const { id, email, fullName } = user;
+  const accessToken = await createAccessToken(id, email, fullName);
 
-    res.json({ accessToken, user });
-  } catch (error) {
-    next(error);
-  }
+  res.json({ accessToken, user });
 });
 
 export const AccountsRouter: TRouter = { path: "/accounts", router };
