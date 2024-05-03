@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { insertWorkflowSchema } from "./schemas";
 import db from "../db";
-import { TEventType, nodes, workflows } from "../db/schema";
+import { TEventType, TTriggerType, nodes, workflows } from "../db/schema";
 import { eq } from "drizzle-orm";
 import WorkflowExecution from "../executions/execution";
 import { TriggerTypeToController } from "../triggers";
@@ -21,6 +21,8 @@ const EventTypeToConfigSchema: Record<TEventType, z.ZodSchema> = {
   }),
 };
 
+const TriggersUsingPolling: TTriggerType[] = ["gmail:mail-received"];
+
 async function getWorkflowsById(workflowId: number) {
   const thisWorkflow = await db.query.workflows.findFirst({
     where: eq(workflows.id, workflowId),
@@ -38,6 +40,8 @@ async function createWorkflow(
     node.config = EventTypeToConfigSchema[node.eventType].parse(node.config);
   });
 
+  const usePolling = TriggersUsingPolling.includes(payload.triggerType);
+
   const [workflowRes] = await db
     .insert(workflows)
     .values({
@@ -46,6 +50,7 @@ async function createWorkflow(
       triggerType: payload.triggerType,
       triggerCredentialId: payload.triggerCredentialId,
       resourceId: payload.resourceId,
+      usePolling,
     })
     .returning();
 
@@ -56,8 +61,10 @@ async function createWorkflow(
 
   if (!workflowRes) return;
 
-  const controller = TriggerTypeToController[workflowRes.triggerType];
-  const res = await controller.register(workflowRes);
+  if (!usePolling) {
+    const controller = TriggerTypeToController[workflowRes.triggerType];
+    const res = await controller.register(workflowRes);
+  }
 
   return { workflow: workflowRes, nodes: nodesRes };
 }

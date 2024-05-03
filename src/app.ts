@@ -14,10 +14,12 @@ import { ExecutionsRouter } from "./executions/routes";
 import errorHandlingMiddleware from "./middlewares/errorHandling";
 import { frontendMiddelware } from "./middlewares/frontend";
 import notFoundMiddleWare from "./middlewares/notFound";
+import setupResErrors from "./utils/resErrors";
 
 const app = express();
 
 setupPagination(app);
+setupResErrors(app);
 // Middlewares
 app.use(compression());
 app.use(morgan("dev"));

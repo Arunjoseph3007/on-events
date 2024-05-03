@@ -11,5 +11,11 @@
     "api/index.ts": {
       "includeFiles": "frontend/**/*"
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/workflows/poll",
+      "schedule": "30 08 * * *"
+    }
+  ]
 }

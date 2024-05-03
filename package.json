@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "tsc --noEmit",
+    "start": "yarn build && node dist/index.js",
     "build": "esbuild src/index.ts --platform=node --outfile=dist/index.js --bundle",
     "watch": "esbuild src/index.ts --platform=node --outfile=dist/watch.js --bundle --watch",
     "dev": "nodemon",

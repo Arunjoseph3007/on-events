@@ -57,9 +57,12 @@ export const workflows = pgTable("workflows", {
     () => credentials.id
   ),
   resourceId: text("resource_id").notNull(),
+  // Trigger stuff
   webHookId: varchar("webhook_id", { length: 256 }),
-  // usePolling: boolean("use_polling").default(false).notNull(),
-  // pollingUrl: varchar("polling_url", { length: 265 }),
+  // Polling stuff
+  usePolling: boolean("use_polling").notNull(),
+  pollingUrl: varchar("polling_url", { length: 265 }),
+  dataDeduplicationKey: varchar("data+deduplication_key", { length: 256 }),
 });
 
 export const workflowRelations = relations(workflows, ({ one, many }) => ({
@@ -115,7 +118,10 @@ export const executions = pgTable("executions", {
 });
 
 export const executionRelation = relations(executions, ({ one }) => ({
-  workflow: one(workflows),
+  workflow: one(workflows, {
+    fields: [executions.workflowId],
+    references: [workflows.id],
+  }),
 }));
 
 export const credentials = pgTable("credentials", {

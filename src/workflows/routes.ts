@@ -7,6 +7,7 @@ import { authenticateUser } from "../middlewares/authenticate";
 import { workflows } from "../db/schema";
 import { WorkflowQueries } from "./queries";
 import { desc } from "drizzle-orm";
+import pollAll from "../polling";
 
 const router = Router();
 
@@ -17,6 +18,25 @@ router.post("/:workflowId/trigger", async (req, res, next) => {
       req.body
     );
 
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/poll", async (req, res, next) => {
+  try {
+    if (!req.headers.authorization) {
+      return res.unauthorized();
+    }
+    const [bearer, cronSecret] = req.headers.authorization.split(" ");
+    console.log({ bearer, cronSecret });
+
+    if (bearer != "Bearer" || cronSecret != process.env.CRON_SECRET) {
+      return res.unauthorized();
+    }
+
+    const result = await pollAll();
     res.json(result);
   } catch (error) {
     next(error);
