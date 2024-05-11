@@ -1,20 +1,22 @@
-import "dotenv/config";
 import "./env";
 import express from "express";
+// Middlewares
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import compression from "compression";
+import { rateLimiter } from "./middlewares/ratelimit";
+import { frontendMiddelware } from "./middlewares/frontend";
+import errorHandlingMiddleware from "./middlewares/errorHandling";
 import playMiddleware from "./middlewares/play";
-import { WorflowsRouter } from "./workflows/routes";
+import notFoundMiddleWare from "./middlewares/notFound";
+// Custom express stuff
+import setupResErrors from "./utils/resErrors";
+import { setupPagination } from "./utils/pagination";
+// Routers
+import { ExecutionsRouter } from "./executions/routes";
 import { CredentialsRouter } from "./credentials/routes";
 import { AccountsRouter } from "./accounts/routes";
-import { setupPagination } from "./utils/pagination";
-import { rateLimiter } from "./middlewares/ratelimit";
-import { ExecutionsRouter } from "./executions/routes";
-import errorHandlingMiddleware from "./middlewares/errorHandling";
-import { frontendMiddelware } from "./middlewares/frontend";
-import notFoundMiddleWare from "./middlewares/notFound";
-import setupResErrors from "./utils/resErrors";
+import { WorflowsRouter } from "./workflows/routes";
 
 const app = express();
 
