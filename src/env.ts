@@ -9,6 +9,7 @@ const envSchema = z.object({
   ACTION: z.string(),
   JWT_SECRET_KEY: z.string(),
   CRON_SECRET: z.string(),
+  GMAIL_APP_PASSWORD: z.string(),
 });
 
 function parseEnv() {

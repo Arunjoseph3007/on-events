@@ -16,6 +16,7 @@ import AddPage from "./pages/dashboard/add";
 import SingleWorkflowPage from "./pages/dashboard/[workflowId]";
 import EditWorkflowPage from "./pages/dashboard/[workflowId]/edit";
 import OAuthPage from "./pages/oauth";
+import EmailPage from "./pages/email";
 // Layouts
 import RootLayout from "./layouts/RootLayout";
 import TopNavLayout from "./layouts/TopNavLayout";
@@ -25,6 +26,7 @@ import DiagramProvider from "./contexts/DiagramEditorContext";
 function Router() {
   return (
     <Routes>
+        <Route path="/email" element={<EmailPage />} />
       <Route errorElement={<ErrorPage />} element={<RootLayout />}>
         <Route element={<TopNavLayout />}>
           <Route index element={<HomePage />} />
