@@ -21,13 +21,16 @@ import EmailPage from "./pages/email";
 import RootLayout from "./layouts/RootLayout";
 import TopNavLayout from "./layouts/TopNavLayout";
 import SideNavLayout from "./layouts/SideNavLayout";
+import DevOnlyLayout from "./layouts/DevOnlyLayout";
 import DiagramProvider from "./contexts/DiagramEditorContext";
 
 function Router() {
   return (
     <Routes>
-        <Route path="/email" element={<EmailPage />} />
       <Route errorElement={<ErrorPage />} element={<RootLayout />}>
+        <Route path="/__dev__" element={<DevOnlyLayout />}>
+          <Route path="email" element={<EmailPage />} />
+        </Route>
         <Route element={<TopNavLayout />}>
           <Route index element={<HomePage />} />
           <Route element={<SideNavLayout />}>

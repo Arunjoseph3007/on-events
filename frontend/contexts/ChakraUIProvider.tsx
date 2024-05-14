@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 
 const GlobalStyles = {
   global: (props: Record<string, any>) => ({
+    // Scroll bar
     "::-webkit-scrollbar": {
       width: "10px",
     },
@@ -21,6 +22,11 @@ const GlobalStyles = {
       ":hover": {
         background: "#aaa",
       },
+    },
+
+    // Table
+    table: {
+      borderCollapse: "separate",
     },
   }),
 };

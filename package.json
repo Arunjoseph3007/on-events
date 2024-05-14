@@ -6,10 +6,9 @@
   "scripts": {
     "lint": "tsc --noEmit",
     "start": "yarn build && node dist/index.js",
+    "dev:backend": "npx concurrently \"yarn watch\" \"node --watch dist/watch.js\"",
     "build": "esbuild src/index.ts --platform=node --outfile=dist/index.js --bundle",
     "watch": "esbuild src/index.ts --platform=node --outfile=dist/watch.js --bundle --watch",
-    "dev": "nodemon",
-    "dev:email": "npx react-email dev ./mails",
     "vercel-build": "cd frontend && yarn && yarn build",
     "db:generate": "drizzle-kit generate:pg",
     "db:migrate": "ts-node src/db/migrate.ts"
@@ -23,6 +22,7 @@
     "@types/node": "^20.11.30",
     "@types/nodemailer": "^6.4.15",
     "@types/react": "^18.3.2",
+    "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.20.14",
     "esbuild": "^0.20.2",

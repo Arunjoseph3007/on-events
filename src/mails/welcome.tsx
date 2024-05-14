@@ -16,7 +16,6 @@ interface GithubAccessTokenEmailProps {
   username?: string;
 }
 
-
 const main = {
   backgroundColor: "#ffffff",
   color: "#24292e",
@@ -71,7 +70,6 @@ const footer = {
   textAlign: "center" as const,
   marginTop: "60px",
 };
-
 
 export const GithubAccessTokenEmail = ({
   username = "Arunjoseph3007",
