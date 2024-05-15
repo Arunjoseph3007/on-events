@@ -15,7 +15,6 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import { useFetch } from "../../../libs/reactQuery";
 import type {
-  TCredential,
   TCredentialType,
   TNode,
   TWorkflow,
